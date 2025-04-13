@@ -1,0 +1,10 @@
+/* assets/css/tailwind.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .card {
+        @apply grid grid-cols-4 gap-10 mt-6
+    }
+}
