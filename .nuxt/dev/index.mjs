@@ -1,39 +1,39 @@
-import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { getRequestHeader, splitCookiesString, setResponseStatus, setResponseHeader, send, getRequestHeaders, defineEventHandler, handleCacheHeaders, createEvent, fetchWithEvent, isEvent, eventHandler, getResponseStatus, setResponseHeaders, setHeaders, sendRedirect, proxyRequest, createError, getQuery as getQuery$1, getRequestURL, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getResponseStatusText } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/h3/dist/index.mjs';
+import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { getRequestHeader, splitCookiesString, setResponseStatus, setResponseHeader, send, getRequestHeaders, defineEventHandler, handleCacheHeaders, createEvent, fetchWithEvent, isEvent, eventHandler, getResponseStatus, setResponseHeaders, setHeaders, sendRedirect, proxyRequest, createError, getQuery as getQuery$1, getRequestURL, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getResponseStatusText } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parentPort, threadId } from 'node:worker_threads';
-import { FieldValue } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/firebase-admin/lib/esm/firestore/index.js';
-import multiparty from 'file:///home/reuben/.Documents/Double_Impact/node_modules/multiparty/index.js';
+import { FieldValue } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/firebase-admin/lib/esm/firestore/index.js';
+import multiparty from 'file:///home/reuben/.Documents/ElevateYou/node_modules/multiparty/index.js';
 import fs from 'fs/promises';
-import admin from 'file:///home/reuben/.Documents/Double_Impact/node_modules/firebase-admin/lib/index.js';
-import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { stringify, uneval } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/devalue/index.js';
-import destr from 'file:///home/reuben/.Documents/Double_Impact/node_modules/destr/dist/index.mjs';
-import { withQuery, joinURL, withTrailingSlash, parseURL, withoutBase, getQuery, joinRelativeURL } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/ufo/dist/index.mjs';
-import { renderToString } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/vue/server-renderer/index.mjs';
-import { propsToString, renderSSRHead } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/@unhead/ssr/dist/index.mjs';
-import { createHooks } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/hookable/dist/index.mjs';
-import { createFetch as createFetch$1, Headers as Headers$1 } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/ofetch/dist/node.mjs';
-import { createCall, createFetch } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/unenv/runtime/fetch/index.mjs';
-import { klona } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/defu/dist/defu.mjs';
-import { snakeCase } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/scule/dist/index.mjs';
-import { createStorage, prefixStorage } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/unstorage/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file:///home/reuben/.Documents/Double_Impact/node_modules/unstorage/drivers/fs.mjs';
-import { toRouteMatcher, createRouter } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/radix3/dist/index.mjs';
-import { getContext } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/unctx/dist/index.mjs';
+import admin from 'file:///home/reuben/.Documents/ElevateYou/node_modules/firebase-admin/lib/index.js';
+import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { stringify, uneval } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/devalue/index.js';
+import destr from 'file:///home/reuben/.Documents/ElevateYou/node_modules/destr/dist/index.mjs';
+import { withQuery, joinURL, withTrailingSlash, parseURL, withoutBase, getQuery, joinRelativeURL } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/ufo/dist/index.mjs';
+import { renderToString } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/vue/server-renderer/index.mjs';
+import { propsToString, renderSSRHead } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/@unhead/ssr/dist/index.mjs';
+import { createHooks } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/hookable/dist/index.mjs';
+import { createFetch as createFetch$1, Headers as Headers$1 } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/ofetch/dist/node.mjs';
+import { createCall, createFetch } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/unenv/runtime/fetch/index.mjs';
+import { klona } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/klona/dist/index.mjs';
+import defu, { defuFn } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/defu/dist/defu.mjs';
+import { snakeCase } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/scule/dist/index.mjs';
+import { createStorage, prefixStorage } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/unstorage/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file:///home/reuben/.Documents/ElevateYou/node_modules/unstorage/drivers/fs.mjs';
+import { toRouteMatcher, createRouter } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/radix3/dist/index.mjs';
+import { getContext } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/unctx/dist/index.mjs';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { consola } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/consola/dist/index.mjs';
-import { captureRawStackTrace, parseRawStackTrace } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/errx/dist/index.js';
-import { isVNode, version, unref } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/vue/index.mjs';
-import { basename } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/pathe/dist/index.mjs';
-import { getIcons } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/@iconify/utils/lib/index.mjs';
-import { hash } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/ohash/dist/index.mjs';
-import { collections } from 'file:///home/reuben/.Documents/Double_Impact/.nuxt/nuxt-icon-server-bundle.mjs';
-import { createServerHead as createServerHead$1, CapoPlugin } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/unhead/dist/index.mjs';
-import { defineHeadPlugin } from 'file:///home/reuben/.Documents/Double_Impact/node_modules/@unhead/shared/dist/index.mjs';
+import { consola } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/consola/dist/index.mjs';
+import { captureRawStackTrace, parseRawStackTrace } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/errx/dist/index.js';
+import { isVNode, version, unref } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/vue/index.mjs';
+import { basename } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/pathe/dist/index.mjs';
+import { getIcons } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/@iconify/utils/lib/index.mjs';
+import { hash } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/ohash/dist/index.mjs';
+import { collections } from 'file:///home/reuben/.Documents/ElevateYou/.nuxt/nuxt-icon-server-bundle.mjs';
+import { createServerHead as createServerHead$1, CapoPlugin } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/unhead/dist/index.mjs';
+import { defineHeadPlugin } from 'file:///home/reuben/.Documents/ElevateYou/node_modules/@unhead/shared/dist/index.mjs';
 
 function hasReqHeader(event, name, includes) {
   const value = getRequestHeader(event, name);
@@ -179,13 +179,13 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _MS8uvUp1lD = (function(nitro) {
+const _TsiLNkJkyw = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script$1}<\/script>`);
   });
 });
 
-const rootDir = "/home/reuben/.Documents/Double_Impact";
+const rootDir = "/home/reuben/.Documents/ElevateYou";
 
 const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[{"rel":"manifest","href":"/manifest.json"}],"style":[],"script":[],"noscript":[]};
 
@@ -204,7 +204,7 @@ const devReducers = {
   URL: (data) => data instanceof URL ? data.toString() : undefined
 };
 const asyncContext = getContext("nuxt-dev", { asyncContext: true, AsyncLocalStorage });
-const _LMRCMZfGDJ = (nitroApp) => {
+const _t59xhiF8nx = (nitroApp) => {
   const handler = nitroApp.h3App.handler;
   nitroApp.h3App.handler = (event) => {
     return asyncContext.callAsync({ logs: [], event }, () => handler(event));
@@ -275,16 +275,16 @@ function onConsoleLog(callback) {
 
 const script = "\"use strict\";(()=>{const t=window,e=document.documentElement,c=[\"dark\",\"light\"],n=getStorageValue(\"localStorage\",\"nuxt-color-mode\")||\"system\";let i=n===\"system\"?u():n;const r=e.getAttribute(\"data-color-mode-forced\");r&&(i=r),l(i),t[\"__NUXT_COLOR_MODE__\"]={preference:n,value:i,getColorScheme:u,addColorScheme:l,removeColorScheme:d};function l(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.add(s):e.className+=\" \"+s,a&&e.setAttribute(\"data-\"+a,o)}function d(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.remove(s):e.className=e.className.replace(new RegExp(s,\"g\"),\"\"),a&&e.removeAttribute(\"data-\"+a)}function f(o){return t.matchMedia(\"(prefers-color-scheme\"+o+\")\")}function u(){if(t.matchMedia&&f(\"\").media!==\"not all\"){for(const o of c)if(f(\":\"+o).matches)return o}return\"light\"}})();function getStorageValue(t,e){switch(t){case\"localStorage\":return window.localStorage.getItem(e);case\"sessionStorage\":return window.sessionStorage.getItem(e);case\"cookie\":return getCookie(e);default:return null}}function getCookie(t){const c=(\"; \"+window.document.cookie).split(\"; \"+t+\"=\");if(c.length===2)return c.pop()?.split(\";\").shift()}";
 
-const _yg1WfygQjO = (function(nitro) {
+const _MXwlr1gXH9 = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
 const plugins = [
-  _MS8uvUp1lD,
-_LMRCMZfGDJ,
-_yg1WfygQjO
+  _TsiLNkJkyw,
+_t59xhiF8nx,
+_MXwlr1gXH9
 ];
 
 const inlineAppConfig = {
@@ -631,7 +631,7 @@ new Proxy(/* @__PURE__ */ Object.create(null), {
   }
 });
 
-const serverAssets = [{"baseName":"server","dir":"/home/reuben/.Documents/Double_Impact/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"/home/reuben/.Documents/ElevateYou/server/assets"}];
 
 const assets = createStorage();
 
@@ -643,11 +643,11 @@ const storage = createStorage({});
 
 storage.mount('/assets', assets);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/Double_Impact","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/Double_Impact/server","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/Double_Impact/.nuxt","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/Double_Impact/.nuxt/cache","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/home/reuben/.Documents/Double_Impact/.data/kv","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/ElevateYou","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/ElevateYou/server","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/ElevateYou/.nuxt","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/ElevateYou/.nuxt/cache","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/home/reuben/.Documents/ElevateYou/.data/kv","ignore":["**/node_modules/**","**/.git/**"]}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage, base) : storage;
@@ -1142,7 +1142,7 @@ function publicAssetsURL(...path) {
 
 const warnOnceSet = /* @__PURE__ */ new Set();
 const DEFAULT_ENDPOINT = "https://api.iconify.design";
-const _k0qv23 = defineCachedEventHandler(async (event) => {
+const _Nag4V3 = defineCachedEventHandler(async (event) => {
   const url = getRequestURL(event);
   if (!url)
     return createError({ status: 400, message: "Invalid icon request" });
@@ -1200,28 +1200,28 @@ const _k0qv23 = defineCachedEventHandler(async (event) => {
   // 1 week
 });
 
-const _lazy_gEQjyk = () => Promise.resolve().then(function () { return fertilizerRecords$1; });
-const _lazy_gfSsvW = () => Promise.resolve().then(function () { return harvestRecords$1; });
-const _lazy_XzfHEx = () => Promise.resolve().then(function () { return laborRecord$1; });
-const _lazy_RVTs1t = () => Promise.resolve().then(function () { return landPrepRecords$1; });
-const _lazy_cKsVCM = () => Promise.resolve().then(function () { return progressRecords$1; });
-const _lazy_6WQlAB = () => Promise.resolve().then(function () { return projects$1; });
-const _lazy_saB1p6 = () => Promise.resolve().then(function () { return sprayingRecords$1; });
-const _lazy_FNRoC4 = () => Promise.resolve().then(function () { return updateStatus$1; });
-const _lazy_NzV5si = () => Promise.resolve().then(function () { return renderer$1; });
+const _lazy_qpErHM = () => Promise.resolve().then(function () { return fertilizerRecords$1; });
+const _lazy_zavsRU = () => Promise.resolve().then(function () { return harvestRecords$1; });
+const _lazy_w6NBAf = () => Promise.resolve().then(function () { return laborRecord$1; });
+const _lazy_I1UMGa = () => Promise.resolve().then(function () { return landPrepRecords$1; });
+const _lazy_GNUpM5 = () => Promise.resolve().then(function () { return progressRecords$1; });
+const _lazy_zFmoSs = () => Promise.resolve().then(function () { return projects$1; });
+const _lazy_VwJNFG = () => Promise.resolve().then(function () { return sprayingRecords$1; });
+const _lazy_xsDdYV = () => Promise.resolve().then(function () { return updateStatus$1; });
+const _lazy_vdy711 = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
-  { route: '/api/fertilizerRecords', handler: _lazy_gEQjyk, lazy: true, middleware: false, method: undefined },
-  { route: '/api/harvestRecords', handler: _lazy_gfSsvW, lazy: true, middleware: false, method: undefined },
-  { route: '/api/laborRecord', handler: _lazy_XzfHEx, lazy: true, middleware: false, method: undefined },
-  { route: '/api/landPrepRecords', handler: _lazy_RVTs1t, lazy: true, middleware: false, method: undefined },
-  { route: '/api/progressRecords', handler: _lazy_cKsVCM, lazy: true, middleware: false, method: undefined },
-  { route: '/api/projects', handler: _lazy_6WQlAB, lazy: true, middleware: false, method: undefined },
-  { route: '/api/sprayingRecords', handler: _lazy_saB1p6, lazy: true, middleware: false, method: undefined },
-  { route: '/api/updateStatus', handler: _lazy_FNRoC4, lazy: true, middleware: false, method: undefined },
-  { route: '/__nuxt_error', handler: _lazy_NzV5si, lazy: true, middleware: false, method: undefined },
-  { route: '/api/_nuxt_icon/:collection', handler: _k0qv23, lazy: false, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_NzV5si, lazy: true, middleware: false, method: undefined }
+  { route: '/api/fertilizerRecords', handler: _lazy_qpErHM, lazy: true, middleware: false, method: undefined },
+  { route: '/api/harvestRecords', handler: _lazy_zavsRU, lazy: true, middleware: false, method: undefined },
+  { route: '/api/laborRecord', handler: _lazy_w6NBAf, lazy: true, middleware: false, method: undefined },
+  { route: '/api/landPrepRecords', handler: _lazy_I1UMGa, lazy: true, middleware: false, method: undefined },
+  { route: '/api/progressRecords', handler: _lazy_GNUpM5, lazy: true, middleware: false, method: undefined },
+  { route: '/api/projects', handler: _lazy_zFmoSs, lazy: true, middleware: false, method: undefined },
+  { route: '/api/sprayingRecords', handler: _lazy_VwJNFG, lazy: true, middleware: false, method: undefined },
+  { route: '/api/updateStatus', handler: _lazy_xsDdYV, lazy: true, middleware: false, method: undefined },
+  { route: '/__nuxt_error', handler: _lazy_vdy711, lazy: true, middleware: false, method: undefined },
+  { route: '/api/_nuxt_icon/:collection', handler: _Nag4V3, lazy: false, middleware: false, method: undefined },
+  { route: '/**', handler: _lazy_vdy711, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {
@@ -2120,8 +2120,8 @@ const renderSSRHeadOptions = {"omitLineBreaks":false};
 
 globalThis.__buildAssetsURL = buildAssetsURL;
 globalThis.__publicAssetsURL = publicAssetsURL;
-const getClientManifest = () => import('file:///home/reuben/.Documents/Double_Impact/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
-const getServerEntry = () => import('file:///home/reuben/.Documents/Double_Impact/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
+const getClientManifest = () => import('file:///home/reuben/.Documents/ElevateYou/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
+const getServerEntry = () => import('file:///home/reuben/.Documents/ElevateYou/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
 const getSSRStyles = lazyCachedFunction(() => Promise.resolve().then(function () { return styles$1; }).then((r) => r.default || r));
 const getSSRRenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();

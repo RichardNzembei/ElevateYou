@@ -7,12 +7,12 @@
     "module": true,
     "resourceType": "script"
   },
-  "/home/reuben/.Documents/Double_Impact/node_modules/nuxt/dist/app/entry.js": {
+  "/home/reuben/.Documents/ElevateYou/node_modules/nuxt/dist/app/entry.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
     "isEntry": true,
-    "file": "/home/reuben/.Documents/Double_Impact/node_modules/nuxt/dist/app/entry.js"
+    "file": "/home/reuben/.Documents/ElevateYou/node_modules/nuxt/dist/app/entry.js"
   }
 }
