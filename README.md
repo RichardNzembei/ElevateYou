@@ -77,32 +77,45 @@ elevateyou/
   ```bash
   npm install
 
+  ```
+
 3. **Add Required Packages**:
 -Vue.js:
-  ``bash
- npm install vue vue-router@4
+  ```bash
+  npm install vue vue-router@4
+  ```
 
 -Tailwind CSS:
- ``bash
+ ```bash
   npm install -D tailwindcss postcss autoprefixer
 
+  ```
+
 -Lucide Icons:
- ``bash
+ ```bash
  npm install lucide-vue-next Initialize Tailwind:
+
+ ```
 
 
 -initialize tailwind
- ``bash
+ ```bash
  npx tailwindcss init -p
 
+ ```
+
 -google apis
- ``bash
+ ```bash
  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&family=Caveat&display=swap" rel="stylesheet">
+
+ ```
 
 
 -Start Dev Server:
- ``bash
+ ```bash
  npm run dev
+ 
+ ```
 
 -Visit:
  http://localhost:5173.
