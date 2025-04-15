@@ -20,7 +20,7 @@ if (process.client && 'serviceWorker' in navigator) {
     });
 }
 
-
+console.log("app is mounted");
 </script>
 
 <template>
