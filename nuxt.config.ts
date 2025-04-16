@@ -8,8 +8,9 @@ export default defineNuxtConfig({
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          name: 'ReubenS_FarmS',
-          short_name: 'ReubenS',
+          name: 'ElevateYou',
+          short_name: 'ElevateYou',
+          description: 'ElevateYou is a web app that helps you track your daily habits and goals.',
           start_url: '/',
           scope: '/',
           display: 'standalone',
@@ -17,13 +18,13 @@ export default defineNuxtConfig({
           theme_color: '#ffffff',
           icons: [
             {
-              src: '/iconified/144x144.png',
+              src: '/icons/144x144.png',
               sizes: '144x144',
               type: 'image/png',
               purpose: 'any'
             },
             {
-              src: '/favicon/192x192.png',
+              src: '/icons/192x192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any maskable'
@@ -46,7 +47,7 @@ export default defineNuxtConfig({
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,png,svg,ico,json}'],
-          navigateFallback: 'https://reubens-farm-s.vercel.app/',
+          navigateFallback: 'https://elevate-you-rho.vercel.app/',
           navigateFallbackDenylist: [/^\/nuxt\//, /\/api\//]
         },
         includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png', 'mask-icon.svg'],
