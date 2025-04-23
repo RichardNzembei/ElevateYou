@@ -40,13 +40,16 @@
               <div class="w-1/5 h-9 bg-green-700 rounded"></div>
             </div>
           </div>
-          <button v-if="isCodingConnected" @click="disconnectGitHub" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+          <button v-if="isCodingConnected" @click="disconnectGitHub"
+            class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
             Disconnect
           </button>
-          <button v-else @click="connectGitHub" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-600 hover:animate-bounce">
+          <button v-else @click="connectGitHub"
+            class="mt-4 px-4 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-600 hover:animate-bounce">
             Connect GitHub
           </button>
-          <button @click="$router.push('/dev-progress')" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-600 hover:animate-bounce">
+          <button @click="$router.push('/dev-progress')"
+            class="mt-4 px-4 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -71,13 +74,16 @@
               <div class="w-1/3 h-4 bg-orange-500 rounded"></div>
             </div>
           </div>
-          <button v-if="isScreenTimeConnected" @click="disconnectScreenTime" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+          <button v-if="isScreenTimeConnected" @click="disconnectScreenTime"
+            class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
             Disconnect
           </button>
-          <button v-else @click="requestScreenTimePermission" class="mt-4 px-4 py-2 bg-orange-500 text-white rounded-full text-sm hover:bg-orange-600 hover:animate-bounce">
+          <button v-else @click="requestScreenTimePermission"
+            class="mt-4 px-4 py-2 bg-orange-500 text-white rounded-full text-sm hover:bg-orange-600 hover:animate-bounce">
             Grant Permissions
           </button>
-          <button @click="$router.push('/screen-time')" class="mt-4 px-4 py-2 bg-orange-500 text-white rounded-full text-sm hover:bg-orange-600 hover:animate-bounce">
+          <button @click="$router.push('/screen-time')"
+            class="mt-4 px-4 py-2 bg-orange-500 text-white rounded-full text-sm hover:bg-orange-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -99,20 +105,26 @@
             <div v-if="isExerciseConnected" class="h-16 mt-4 flex justify-center">
               <div class="relative h-16 w-16">
                 <svg class="h-full w-full" viewBox="0 0 36 36">
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E9D5FF" stroke-width="4"/>
-                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" fill="none" stroke="#8B5CF6" stroke-width="4" stroke-dasharray="80, 100"/>
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                    stroke="#E9D5FF" stroke-width="4" />
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831" fill="none" stroke="#8B5CF6" stroke-width="4"
+                    stroke-dasharray="80, 100" />
                 </svg>
-                <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-purple-600">{{ workoutData?.goal || 80 }}%</span>
+                <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-purple-600">{{
+                  workoutData?.goal || 80 }}%</span>
               </div>
             </div>
           </div>
-          <button v-if="isExerciseConnected" @click="disconnectGoogleFit" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+          <button v-if="isExerciseConnected" @click="disconnectGoogleFit"
+            class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
             Disconnect
           </button>
-          <button v-else @click="connectGoogleFit" class="mt-4 px-4 py-2 bg-purple-500 text-white rounded-full text-sm hover:bg-purple-600 hover:animate-bounce">
+          <button v-else @click="connectGoogleFit"
+            class="mt-4 px-4 py-2 bg-purple-500 text-white rounded-full text-sm hover:bg-purple-600 hover:animate-bounce">
             Connect Google Fit
           </button>
-          <button @click="$router.push('/exercise')" class="mt-4 px-4 py-2 bg-purple-500 text-white rounded-full text-sm hover:bg-purple-600 hover:animate-bounce">
+          <button @click="$router.push('/exercise')"
+            class="mt-4 px-4 py-2 bg-purple-500 text-white rounded-full text-sm hover:bg-purple-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -133,18 +145,23 @@
             <p v-else class="text-sm text-gray-600">Not Connected</p>
             <div v-if="isFinancesConnected" class="h-16 mt-4 flex justify-center">
               <svg class="h-16 w-16" viewBox="0 0 36 36">
-                <path d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" fill="none" stroke="#FBBF24" stroke-width="4" stroke-dasharray="60, 40"/>
-                <path d="M18 2 a 16 16 0 0 1 0 32" fill="none" stroke="#F3F4F6" stroke-width="4" stroke-dasharray="40, 60"/>
+                <path d="M18 2 a 16 16 0 0 1 0 32 a 16 16 0 0 1 0 -32" fill="none" stroke="#FBBF24" stroke-width="4"
+                  stroke-dasharray="60, 40" />
+                <path d="M18 2 a 16 16 0 0 1 0 32" fill="none" stroke="#F3F4F6" stroke-width="4"
+                  stroke-dasharray="40, 60" />
               </svg>
             </div>
           </div>
-          <button v-if="isFinancesConnected" @click="disconnectFinances" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
+          <button v-if="isFinancesConnected" @click="disconnectFinances"
+            class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
             Disconnect
           </button>
-          <button v-else @click="connectFinances" class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600 hover:animate-bounce">
+          <button v-else @click="connectFinances"
+            class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600 hover:animate-bounce">
             Manual Entry
           </button>
-          <button @click="$router.push('/finances')" class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600 hover:animate-bounce">
+          <button @click="$router.push('/finances')"
+            class="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -157,13 +174,15 @@
           </div>
           <div class="mt-4">
             <p v-for="reminder in reminders.slice(0, 2)" :key="reminder.title" class="text-sm text-gray-600">
-              • {{ reminder.title }} <span :class="reminder.isDone ? 'text-green-500' : 'text-red-500'">{{ reminder.isDone ? '✓' : '⏳' }}</span>
+              • {{ reminder.title }} <span :class="reminder.isDone ? 'text-green-500' : 'text-red-500'">{{
+                reminder.isDone ? '✓' : '⏳' }}</span>
             </p>
             <div class="h-16 mt-4 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-600">
               {{ completedReminders }} of {{ reminders.length }} tasks done
             </div>
           </div>
-          <button @click="$router.push('/reminders')" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full text-sm hover:bg-blue-600 hover:animate-bounce">
+          <button @click="$router.push('/reminders')"
+            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full text-sm hover:bg-blue-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -189,7 +208,8 @@
               <div class="w-1/5 h-14 bg-pink-700 rounded"></div>
             </div>
           </div>
-          <button @click="$router.push('/insights')" class="mt-4 px-4 py-2 bg-pink-500 text-white rounded-full text-sm hover:bg-pink-600 hover:animate-bounce">
+          <button @click="$router.push('/insights')"
+            class="mt-4 px-4 py-2 bg-pink-500 text-white rounded-full text-sm hover:bg-pink-600 hover:animate-bounce">
             View Details
           </button>
         </div>
@@ -201,12 +221,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useFirebase } from '#imports';
-import { 
-  GithubAuthProvider, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  signOut, 
-  linkWithCredential, 
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  linkWithCredential,
   fetchSignInMethodsForEmail,
   EmailAuthProvider
 } from 'firebase/auth';
@@ -261,7 +281,7 @@ onMounted(() => {
   const userId = auth.currentUser.uid;
   console.log('Fetching data for user:', userId);
   const userDoc = doc(firestore, 'Users', userId);
-  
+
   const unsubscribe = onSnapshot(userDoc, (doc) => {
     if (!doc.exists()) {
       error.value = 'User data not found.';
@@ -276,9 +296,9 @@ onMounted(() => {
     devData.value = data?.devTracker?.[0];
     workoutData.value = data?.workouts?.[0] ? { count: data.workouts.length, goal: 80 } : null;
     screenTimeData.value = data?.screenTime?.[0];
-    financeData.value = data?.finances ? { 
-      savings: 200, 
-      spent: data.finances.expenses?.reduce((sum, exp) => sum + (exp.amount || 0), 0) || 0 
+    financeData.value = data?.finances ? {
+      savings: 200,
+      spent: data.finances.expenses?.reduce((sum, exp) => sum + (exp.amount || 0), 0) || 0
     } : null;
     reminders.value = data?.reminders || [];
     completedReminders.value = reminders.value.filter(r => r.isDone).length;
@@ -345,9 +365,9 @@ const connectGitHub = async () => {
     popupTimeout = setTimeout(() => {
       if (!authCompleted) {
         error.value = 'Authentication is taking too long. Possible issues:\n' +
-                     '• GitHub API may be slow\n' +
-                     '• Large number of repositories\n' +
-                     'The connection may still work - please check your profile.';
+          '• GitHub API may be slow\n' +
+          '• Large number of repositories\n' +
+          'The connection may still work - please check your profile.';
         isConnectingGitHub.value = false;
       }
     }, 10000); // Increased to 10 seconds
@@ -397,7 +417,7 @@ const connectGitHub = async () => {
 
     if (err.code === 'auth/account-exists-with-different-credential') {
       await handleExistingAccountError(err);
-    } 
+    }
     // ... other error cases remain the same ...
   } finally {
     isConnectingGitHub.value = false;
@@ -405,15 +425,15 @@ const connectGitHub = async () => {
 };
 const fetchAndSaveGitHubData = async (userId, token) => {
   try {
-    const headers = { 
+    const headers = {
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github.v3+json'
     };
-    
+
     // First check rate limits
     const rateLimitResponse = await fetch('https://api.github.com/rate_limit', { headers });
     const rateLimit = await rateLimitResponse.json();
-    
+
     if (rateLimit.resources.core.remaining < 10) {
       console.warn('GitHub API rate limit approaching');
       return []; // Return empty rather than failing
@@ -421,7 +441,7 @@ const fetchAndSaveGitHubData = async (userId, token) => {
 
     // Rest of your existing fetch logic...
     const devTracker = await fetchGitHubData(token);
-    
+
     if (devTracker.length > 0) {
       await setDoc(
         doc(firestore, 'Users', userId),
@@ -441,16 +461,16 @@ const handleExistingAccountError = async (err) => {
   try {
     // Extract email from error (works in newer Firebase versions)
     const email = err.customData?.email || err.email;
-    
+
     if (!email) {
       error.value = 'We found an existing account but could not retrieve the email. ' +
-                   'Please sign in with your other provider first.';
+        'Please sign in with your other provider first.';
       return;
     }
 
     // Fetch all auth providers associated with this email
     const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-    
+
     // Create user-friendly provider names
     const providerNames = signInMethods.map(method => {
       switch (method) {
@@ -479,10 +499,10 @@ const handleExistingAccountError = async (err) => {
     // Create actionable error message
     if (signInMethods.includes('password')) {
       error.value = `This email is already registered with ${providerNames.join(' or ')}. ` +
-                   `Please sign in with your email and password first, then you can link GitHub.`;
+        `Please sign in with your email and password first, then you can link GitHub.`;
     } else {
       error.value = `This GitHub account is already associated with ${providerNames.join(' or ')}. ` +
-                   `Please sign in with ${providerNames.join(' or ')} first, then link GitHub in your account settings.`;
+        `Please sign in with ${providerNames.join(' or ')} first, then link GitHub in your account settings.`;
     }
 
     // Add UI elements to help user resolve
@@ -493,21 +513,21 @@ const handleExistingAccountError = async (err) => {
   } catch (fetchError) {
     console.error('Error handling existing account:', fetchError);
     error.value = 'We encountered an issue verifying your account. ' +
-                 'Please try again or contact support.';
+      'Please try again or contact support.';
   }
 };
 
 const disconnectGitHub = async () => {
   if (!process.client || !auth || !firestore) return;
-  
+
   try {
     const userId = auth.currentUser.uid;
     await setDoc(
-      doc(firestore, 'Users', userId), 
+      doc(firestore, 'Users', userId),
       {
         profile: { connectedAccounts: { coding: { github: null } } },
         devTracker: []
-      }, 
+      },
       { merge: true }
     );
     isCodingConnected.value = false;
@@ -519,11 +539,11 @@ const disconnectGitHub = async () => {
 
 const fetchGitHubData = async (token) => {
   try {
-    const headers = { 
+    const headers = {
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github.v3+json'
     };
-    
+
     // Fetch user email first
     const emailsResponse = await fetch('https://api.github.com/user/emails', { headers });
     if (!emailsResponse.ok) throw new Error('Failed to fetch GitHub emails');
@@ -541,7 +561,7 @@ const fetchGitHubData = async (token) => {
         { headers }
       );
       const commits = commitsResponse.ok ? await commitsResponse.json() : [];
-      
+
       return {
         date: new Date().toISOString(),
         repo: repo.name,
@@ -585,14 +605,24 @@ const logout = async () => {
 .font-quicksand {
   font-family: 'Quicksand', sans-serif;
 }
+
 .font-caveat {
   font-family: 'Caveat', cursive;
 }
+
 .animate-bounce {
   animation: bounce 0.3s ease-in-out;
 }
+
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 </style>
