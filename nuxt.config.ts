@@ -1,64 +1,42 @@
-import { defineNuxtConfig } from 'nuxt/config'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineNuxtConfig } from "nuxt/config";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineNuxtConfig({
-  modules: ['@nuxt/ui', '@pinia/nuxt'],
+  modules: ["@nuxt/ui", "@pinia/nuxt"],
+
+  compatibilityDate: "2025-02-15",
+  plugins: ["~/plugins/firebase.js"],
+
+  runtimeConfig: {
+    public: {
+      firebaseApiKey: process.env.FIREBASE_API_KEY,
+      firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+      firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      firebaseAppId: process.env.FIREBASE_APP_ID,
+      firebaseMeasurementId: process.env.FIREBASE_MEASUREMENT_ID,
+      recaptchaSiteKey: process.env.NUXT_PUBLIC_RECAPTCHA_SITE_KEY,
+    },
+  },
+
   vite: {
     plugins: [
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: "autoUpdate",
         manifest: {
-          name: 'ElevateYou',
-          short_name: 'ElevateYou',
-          description: 'ElevateYou is a web app that helps you track your daily habits and goals.',
-          start_url: '/',
-          scope: '/',
-          display: 'standalone',
-          background_color: '#ffffff',
-          theme_color: '#ffffff',
+          name: "Growth Tracker",
+          short_name: "Growth",
+          theme_color: "#10B981",
           icons: [
             {
-              src: '/icons/144x144.png',
-              sizes: '144x144',
-              type: 'image/png',
-              purpose: 'any'
+              src: "/icon-192x192.png",
+              sizes: "192x192",
+              type: "image/png",
             },
-            {
-              src: '/icons/192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any maskable'
-            },
-            {
-              src: '/favicon/512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable'
-            }
           ],
-          screenshots: [
-            {
-              src: '/screenshots/screenshot1.png',
-              sizes: '1080x1920',
-              type: 'image/png',
-              form_factor: 'wide'
-            }
-          ]
         },
-        workbox: {
-          globPatterns: ['**/*.{js,css,html,png,svg,ico,json}'],
-          navigateFallback: 'https://elevate-you-rho.vercel.app/',
-          navigateFallbackDenylist: [/^\/nuxt\//, /\/api\//]
-        },
-        includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png', 'mask-icon.svg'],
-        srcDir: 'public'
-      })
-    ]
+      }),
+    ],
   },
-  app: {
-    head: {
-      link: [{ rel: 'manifest', href: '/manifest.json' }]
-    }
-  },
-  compatibilityDate: '2025-02-15'
-})
+});

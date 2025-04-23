@@ -112,6 +112,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']
   const useFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']
+  const useFirebase: typeof import('../../composables/firebase-client')['useFirebase']
   const useFormGroup: typeof import('../../node_modules/@nuxt/ui/dist/runtime/composables/useFormGroup')['useFormGroup']
   const useHead: typeof import('../../node_modules/@unhead/vue')['useHead']
   const useHeadSafe: typeof import('../../node_modules/@unhead/vue')['useHeadSafe']
@@ -312,6 +313,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']>
     readonly useFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']>
+    readonly useFirebase: UnwrapRef<typeof import('../../composables/firebase-client')['useFirebase']>
     readonly useFormGroup: UnwrapRef<typeof import('../../node_modules/@nuxt/ui/dist/runtime/composables/useFormGroup')['useFormGroup']>
     readonly useHead: UnwrapRef<typeof import('../../node_modules/@unhead/vue')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('../../node_modules/@unhead/vue')['useHeadSafe']>
