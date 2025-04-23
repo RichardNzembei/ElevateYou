@@ -200,7 +200,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useFirebase } from '@/firebase-client';
+import { useFirebase } from '#imports';
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
