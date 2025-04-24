@@ -1,16 +1,13 @@
 <template>
-  <div class="bg-gray-100 min-h-screen p-4 sm:p-6">
+  <div class="min-h-screen p-4 sm:p-6">
     <div v-if="isLoading" class="text-center text-lg text-gray-600">Loading...</div>
     <div v-else>
       <!-- Header -->
       <div class="text-center mb-6">
-        <h1 class="text-3xl sm:text-4xl font-quicksand font-bold text-navy-800">Your Growth Journey</h1>
+        <h1 class="text-md sm:text-lg font-quicksand font-bold text-black">Your Growth Journey</h1>
         <p class="text-sm sm:text-base font-caveat text-gray-600 italic mt-2">
           “Small steps, big wins!” — Keep shining!
         </p>
-        <button @click="logout" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm hover:bg-red-600">
-          Log Out
-        </button>
       </div>
 
       <!-- Error Message -->
@@ -589,16 +586,7 @@ const connectFinances = async () => { /* ... */ };
 const disconnectFinances = async () => { /* ... */ };
 const fetchGoogleFitData = async () => { /* ... */ };
 
-const logout = async () => {
-  if (!process.client || !auth) return;
-  try {
-    await signOut(auth);
-    router.push('/login');
-  } catch (err) {
-    error.value = errorMessages[err.code] || 'Failed to log out. Please try again.';
-    console.error('Logout error:', err);
-  }
-};
+
 </script>
 
 <style scoped>
