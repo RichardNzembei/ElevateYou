@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-50 min-h-screen p-4 md:p-8">
+    <div class="bg-gray-50 min-h-screen">
         <NavigationBar />
         <OverView />
     </div>
