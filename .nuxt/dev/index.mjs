@@ -1,35 +1,35 @@
-import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { getRequestHeader, splitCookiesString, setResponseStatus, setResponseHeader, send, getRequestHeaders, defineEventHandler, handleCacheHeaders, createEvent, fetchWithEvent, isEvent, eventHandler, getResponseStatus, setResponseHeaders, setHeaders, sendRedirect, proxyRequest, createError, getQuery as getQuery$1, getRequestURL, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getResponseStatusText } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/h3/dist/index.mjs';
+import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { getRequestHeader, splitCookiesString, setResponseStatus, setResponseHeader, send, getRequestHeaders, defineEventHandler, handleCacheHeaders, createEvent, fetchWithEvent, isEvent, eventHandler, getResponseStatus, setResponseHeaders, setHeaders, sendRedirect, proxyRequest, createError, getQuery as getQuery$1, getRequestURL, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getResponseStatusText } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parentPort, threadId } from 'node:worker_threads';
-import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { stringify, uneval } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/devalue/index.js';
-import destr from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/destr/dist/index.mjs';
-import { withQuery, joinURL, withTrailingSlash, parseURL, withoutBase, getQuery, joinRelativeURL } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/ufo/dist/index.mjs';
-import { renderToString } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/vue/server-renderer/index.mjs';
-import { propsToString, renderSSRHead } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/@unhead/ssr/dist/index.mjs';
-import { createHooks } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/hookable/dist/index.mjs';
-import { createFetch as createFetch$1, Headers as Headers$1 } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/ofetch/dist/node.mjs';
-import { createCall, createFetch } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/unenv/runtime/fetch/index.mjs';
-import { klona } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/defu/dist/defu.mjs';
-import { snakeCase } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/scule/dist/index.mjs';
-import { createStorage, prefixStorage } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/unstorage/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/unstorage/drivers/fs.mjs';
-import { toRouteMatcher, createRouter } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/radix3/dist/index.mjs';
-import { getContext } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/unctx/dist/index.mjs';
+import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { stringify, uneval } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/devalue/index.js';
+import destr from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/destr/dist/index.mjs';
+import { withQuery, joinURL, withTrailingSlash, parseURL, withoutBase, getQuery, joinRelativeURL } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/ufo/dist/index.mjs';
+import { renderToString } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/vue/server-renderer/index.mjs';
+import { propsToString, renderSSRHead } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/@unhead/ssr/dist/index.mjs';
+import { createHooks } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/hookable/dist/index.mjs';
+import { createFetch as createFetch$1, Headers as Headers$1 } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/ofetch/dist/node.mjs';
+import { createCall, createFetch } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/unenv/runtime/fetch/index.mjs';
+import { klona } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/klona/dist/index.mjs';
+import defu, { defuFn } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/defu/dist/defu.mjs';
+import { snakeCase } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/scule/dist/index.mjs';
+import { createStorage, prefixStorage } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/unstorage/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/unstorage/drivers/fs.mjs';
+import { toRouteMatcher, createRouter } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/radix3/dist/index.mjs';
+import { getContext } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/unctx/dist/index.mjs';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { consola } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/consola/dist/index.mjs';
-import { captureRawStackTrace, parseRawStackTrace } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/errx/dist/index.js';
-import { isVNode, version, unref } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/vue/index.mjs';
-import { basename } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/pathe/dist/index.mjs';
-import { getIcons } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/@iconify/utils/lib/index.mjs';
-import { hash } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/ohash/dist/index.mjs';
-import { collections } from 'file:///home/reuben/.Documents/ElevateYou-1/.nuxt/nuxt-icon-server-bundle.mjs';
-import { createServerHead as createServerHead$1, CapoPlugin } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/unhead/dist/index.mjs';
-import { defineHeadPlugin } from 'file:///home/reuben/.Documents/ElevateYou-1/node_modules/@unhead/shared/dist/index.mjs';
+import { consola } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/consola/dist/index.mjs';
+import { captureRawStackTrace, parseRawStackTrace } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/errx/dist/index.js';
+import { isVNode, version, unref } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/vue/index.mjs';
+import { basename } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/pathe/dist/index.mjs';
+import { getIcons } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/@iconify/utils/lib/index.mjs';
+import { hash } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/ohash/dist/index.mjs';
+import { collections } from 'file:///home/saintreborn/Documents/ElevateYou/.nuxt/nuxt-icon-server-bundle.mjs';
+import { createServerHead as createServerHead$1, CapoPlugin } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/unhead/dist/index.mjs';
+import { defineHeadPlugin } from 'file:///home/saintreborn/Documents/ElevateYou/node_modules/@unhead/shared/dist/index.mjs';
 
 function hasReqHeader(event, name, includes) {
   const value = getRequestHeader(event, name);
@@ -175,13 +175,13 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _E2ruUA2s5L = (function(nitro) {
+const _nEoVG4EtRX = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script$1}<\/script>`);
   });
 });
 
-const rootDir = "/home/reuben/.Documents/ElevateYou-1";
+const rootDir = "/home/saintreborn/Documents/ElevateYou";
 
 const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[]};
 
@@ -200,7 +200,7 @@ const devReducers = {
   URL: (data) => data instanceof URL ? data.toString() : undefined
 };
 const asyncContext = getContext("nuxt-dev", { asyncContext: true, AsyncLocalStorage });
-const _COVmiKWD8B = (nitroApp) => {
+const _4h1K6NcKMJ = (nitroApp) => {
   const handler = nitroApp.h3App.handler;
   nitroApp.h3App.handler = (event) => {
     return asyncContext.callAsync({ logs: [], event }, () => handler(event));
@@ -271,16 +271,16 @@ function onConsoleLog(callback) {
 
 const script = "\"use strict\";(()=>{const t=window,e=document.documentElement,c=[\"dark\",\"light\"],n=getStorageValue(\"localStorage\",\"nuxt-color-mode\")||\"system\";let i=n===\"system\"?u():n;const r=e.getAttribute(\"data-color-mode-forced\");r&&(i=r),l(i),t[\"__NUXT_COLOR_MODE__\"]={preference:n,value:i,getColorScheme:u,addColorScheme:l,removeColorScheme:d};function l(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.add(s):e.className+=\" \"+s,a&&e.setAttribute(\"data-\"+a,o)}function d(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.remove(s):e.className=e.className.replace(new RegExp(s,\"g\"),\"\"),a&&e.removeAttribute(\"data-\"+a)}function f(o){return t.matchMedia(\"(prefers-color-scheme\"+o+\")\")}function u(){if(t.matchMedia&&f(\"\").media!==\"not all\"){for(const o of c)if(f(\":\"+o).matches)return o}return\"light\"}})();function getStorageValue(t,e){switch(t){case\"localStorage\":return window.localStorage.getItem(e);case\"sessionStorage\":return window.sessionStorage.getItem(e);case\"cookie\":return getCookie(e);default:return null}}function getCookie(t){const c=(\"; \"+window.document.cookie).split(\"; \"+t+\"=\");if(c.length===2)return c.pop()?.split(\";\").shift()}";
 
-const _UAi0yaOYnY = (function(nitro) {
+const _rGQd9gr8qO = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
 const plugins = [
-  _E2ruUA2s5L,
-_COVmiKWD8B,
-_UAi0yaOYnY
+  _nEoVG4EtRX,
+_4h1K6NcKMJ,
+_rGQd9gr8qO
 ];
 
 const inlineAppConfig = {
@@ -577,7 +577,7 @@ const _inlineRuntimeConfig = {
     "firebaseApiKey": "AIzaSyB1-QztHFMuy5J2j63k6qkHXx6C6ITl76Y",
     "firebaseAuthDomain": "elevateyou-2f6f5.firebaseapp.com",
     "firebaseProjectId": "elevateyou-2f6f5",
-    "firebaseStorageBucket": "elevateyou-2f6f5.appspot.com",
+    "firebaseStorageBucket": "elevateyou-2f6f5.firebasestorage.app",
     "firebaseMessagingSenderId": "823931881743",
     "firebaseAppId": "1:823931881743:web:3c9fd8a04db23a6eb3567a",
     "firebaseMeasurementId": "G-GYTPZCKZXH",
@@ -636,7 +636,7 @@ new Proxy(/* @__PURE__ */ Object.create(null), {
   }
 });
 
-const serverAssets = [{"baseName":"server","dir":"/home/reuben/.Documents/ElevateYou-1/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"/home/saintreborn/Documents/ElevateYou/server/assets"}];
 
 const assets = createStorage();
 
@@ -648,11 +648,11 @@ const storage = createStorage({});
 
 storage.mount('/assets', assets);
 
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/ElevateYou-1","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/reuben/.Documents/ElevateYou-1/server","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/ElevateYou-1/.nuxt","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/reuben/.Documents/ElevateYou-1/.nuxt/cache","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/home/reuben/.Documents/ElevateYou-1/.data/kv","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/saintreborn/Documents/ElevateYou","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/home/saintreborn/Documents/ElevateYou/server","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/saintreborn/Documents/ElevateYou/.nuxt","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/home/saintreborn/Documents/ElevateYou/.nuxt/cache","ignore":["**/node_modules/**","**/.git/**"]}));
+storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/home/saintreborn/Documents/ElevateYou/.data/kv","ignore":["**/node_modules/**","**/.git/**"]}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage, base) : storage;
@@ -1094,7 +1094,7 @@ getContext("nitro-app", {
   AsyncLocalStorage: undefined
 });
 
-const r=Object.create(null),i=e=>globalThis.process?.env||globalThis._importMeta_.env||globalThis.Deno?.env.toObject()||globalThis.__env__||(e?r:globalThis),s=new Proxy(r,{get(e,o){return i()[o]??r[o]},has(e,o){const E=i();return o in E||o in r},set(e,o,E){const b=i(true);return b[o]=E,true},deleteProperty(e,o){if(!o)return  false;const E=i(true);return delete E[o],true},ownKeys(){const e=i(true);return Object.keys(e)}}),t=typeof process<"u"&&process.env&&"development"||"",B=[["APPVEYOR"],["AWS_AMPLIFY","AWS_APP_ID",{ci:true}],["AZURE_PIPELINES","SYSTEM_TEAMFOUNDATIONCOLLECTIONURI"],["AZURE_STATIC","INPUT_AZURE_STATIC_WEB_APPS_API_TOKEN"],["APPCIRCLE","AC_APPCIRCLE"],["BAMBOO","bamboo_planKey"],["BITBUCKET","BITBUCKET_COMMIT"],["BITRISE","BITRISE_IO"],["BUDDY","BUDDY_WORKSPACE_ID"],["BUILDKITE"],["CIRCLE","CIRCLECI"],["CIRRUS","CIRRUS_CI"],["CLOUDFLARE_PAGES","CF_PAGES",{ci:true}],["CODEBUILD","CODEBUILD_BUILD_ARN"],["CODEFRESH","CF_BUILD_ID"],["DRONE"],["DRONE","DRONE_BUILD_EVENT"],["DSARI"],["GITHUB_ACTIONS"],["GITLAB","GITLAB_CI"],["GITLAB","CI_MERGE_REQUEST_ID"],["GOCD","GO_PIPELINE_LABEL"],["LAYERCI"],["HUDSON","HUDSON_URL"],["JENKINS","JENKINS_URL"],["MAGNUM"],["NETLIFY"],["NETLIFY","NETLIFY_LOCAL",{ci:false}],["NEVERCODE"],["RENDER"],["SAIL","SAILCI"],["SEMAPHORE"],["SCREWDRIVER"],["SHIPPABLE"],["SOLANO","TDDIUM"],["STRIDER"],["TEAMCITY","TEAMCITY_VERSION"],["TRAVIS"],["VERCEL","NOW_BUILDER"],["VERCEL","VERCEL",{ci:false}],["VERCEL","VERCEL_ENV",{ci:false}],["APPCENTER","APPCENTER_BUILD_ID"],["CODESANDBOX","CODESANDBOX_SSE",{ci:false}],["STACKBLITZ"],["STORMKIT"],["CLEAVR"],["ZEABUR"],["CODESPHERE","CODESPHERE_APP_ID",{ci:true}],["RAILWAY","RAILWAY_PROJECT_ID"],["RAILWAY","RAILWAY_SERVICE_ID"],["DENO-DEPLOY","DENO_DEPLOYMENT_ID"],["FIREBASE_APP_HOSTING","FIREBASE_APP_HOSTING",{ci:true}]];function p(){if(globalThis.process?.env)for(const e of B){const o=e[1]||e[0];if(globalThis.process?.env[o])return {name:e[0].toLowerCase(),...e[2]}}return globalThis.process?.env?.SHELL==="/bin/jsh"&&globalThis.process?.versions?.webcontainer?{name:"stackblitz",ci:false}:{name:"",ci:false}}const l=p(),d=l.name;function n(e){return e?e!=="false":false}const I=globalThis.process?.platform||"",T=n(s.CI)||l.ci!==false,R=n(globalThis.process?.stdout&&globalThis.process?.stdout.isTTY);n(s.DEBUG);const A=t==="test"||n(s.TEST);n(s.MINIMAL)||T||A||!R;const _=/^win/i.test(I);!n(s.NO_COLOR)&&(n(s.FORCE_COLOR)||(R||_)&&s.TERM!=="dumb"||T);const C=(globalThis.process?.versions?.node||"").replace(/^v/,"")||null;Number(C?.split(".")[0])||null;const y=globalThis.process||Object.create(null),c={versions:{}};new Proxy(y,{get(e,o){if(o==="env")return s;if(o in e)return e[o];if(o in c)return c[o]}});const L=globalThis.process?.release?.name==="node",a=!!globalThis.Bun||!!globalThis.process?.versions?.bun,D=!!globalThis.Deno,O=!!globalThis.fastly,S=!!globalThis.Netlify,N=!!globalThis.EdgeRuntime,P=globalThis.navigator?.userAgent==="Cloudflare-Workers",F=[[S,"netlify"],[N,"edge-light"],[P,"workerd"],[O,"fastly"],[D,"deno"],[a,"bun"],[L,"node"]];function G(){const e=F.find(o=>o[0]);if(e)return {name:e[1]}}const u=G();u?.name||"";
+const r=Object.create(null),i=e=>globalThis.process?.env||globalThis._importMeta_.env||globalThis.Deno?.env.toObject()||globalThis.__env__||(e?r:globalThis),o=new Proxy(r,{get(e,s){return i()[s]??r[s]},has(e,s){const E=i();return s in E||s in r},set(e,s,E){const B=i(true);return B[s]=E,true},deleteProperty(e,s){if(!s)return  false;const E=i(true);return delete E[s],true},ownKeys(){const e=i(true);return Object.keys(e)}}),t=typeof process<"u"&&process.env&&"development"||"",f=[["APPVEYOR"],["AWS_AMPLIFY","AWS_APP_ID",{ci:true}],["AZURE_PIPELINES","SYSTEM_TEAMFOUNDATIONCOLLECTIONURI"],["AZURE_STATIC","INPUT_AZURE_STATIC_WEB_APPS_API_TOKEN"],["APPCIRCLE","AC_APPCIRCLE"],["BAMBOO","bamboo_planKey"],["BITBUCKET","BITBUCKET_COMMIT"],["BITRISE","BITRISE_IO"],["BUDDY","BUDDY_WORKSPACE_ID"],["BUILDKITE"],["CIRCLE","CIRCLECI"],["CIRRUS","CIRRUS_CI"],["CLOUDFLARE_PAGES","CF_PAGES",{ci:true}],["CLOUDFLARE_WORKERS","WORKERS_CI",{ci:true}],["CODEBUILD","CODEBUILD_BUILD_ARN"],["CODEFRESH","CF_BUILD_ID"],["DRONE"],["DRONE","DRONE_BUILD_EVENT"],["DSARI"],["GITHUB_ACTIONS"],["GITLAB","GITLAB_CI"],["GITLAB","CI_MERGE_REQUEST_ID"],["GOCD","GO_PIPELINE_LABEL"],["LAYERCI"],["HUDSON","HUDSON_URL"],["JENKINS","JENKINS_URL"],["MAGNUM"],["NETLIFY"],["NETLIFY","NETLIFY_LOCAL",{ci:false}],["NEVERCODE"],["RENDER"],["SAIL","SAILCI"],["SEMAPHORE"],["SCREWDRIVER"],["SHIPPABLE"],["SOLANO","TDDIUM"],["STRIDER"],["TEAMCITY","TEAMCITY_VERSION"],["TRAVIS"],["VERCEL","NOW_BUILDER"],["VERCEL","VERCEL",{ci:false}],["VERCEL","VERCEL_ENV",{ci:false}],["APPCENTER","APPCENTER_BUILD_ID"],["CODESANDBOX","CODESANDBOX_SSE",{ci:false}],["CODESANDBOX","CODESANDBOX_HOST",{ci:false}],["STACKBLITZ"],["STORMKIT"],["CLEAVR"],["ZEABUR"],["CODESPHERE","CODESPHERE_APP_ID",{ci:true}],["RAILWAY","RAILWAY_PROJECT_ID"],["RAILWAY","RAILWAY_SERVICE_ID"],["DENO-DEPLOY","DENO_DEPLOYMENT_ID"],["FIREBASE_APP_HOSTING","FIREBASE_APP_HOSTING",{ci:true}]];function b(){if(globalThis.process?.env)for(const e of f){const s=e[1]||e[0];if(globalThis.process?.env[s])return {name:e[0].toLowerCase(),...e[2]}}return globalThis.process?.env?.SHELL==="/bin/jsh"&&globalThis.process?.versions?.webcontainer?{name:"stackblitz",ci:false}:{name:"",ci:false}}const l=b(),p=l.name;function n(e){return e?e!=="false":false}const I=globalThis.process?.platform||"",T=n(o.CI)||l.ci!==false,R=n(globalThis.process?.stdout&&globalThis.process?.stdout.isTTY);n(o.DEBUG);const a=t==="test"||n(o.TEST);n(o.MINIMAL)||T||a||!R;const A=/^win/i.test(I);!n(o.NO_COLOR)&&(n(o.FORCE_COLOR)||(R||A)&&o.TERM!=="dumb"||T);const C=(globalThis.process?.versions?.node||"").replace(/^v/,"")||null;Number(C?.split(".")[0])||null;const W=globalThis.process||Object.create(null),_={versions:{}};new Proxy(W,{get(e,s){if(s==="env")return o;if(s in e)return e[s];if(s in _)return _[s]}});const O=globalThis.process?.release?.name==="node",c=!!globalThis.Bun||!!globalThis.process?.versions?.bun,D=!!globalThis.Deno,L=!!globalThis.fastly,S=!!globalThis.Netlify,u=!!globalThis.EdgeRuntime,N=globalThis.navigator?.userAgent==="Cloudflare-Workers",F=[[S,"netlify"],[u,"edge-light"],[N,"workerd"],[L,"fastly"],[D,"deno"],[c,"bun"],[O,"node"]];function G(){const e=F.find(s=>s[0]);if(e)return {name:e[1]}}const P=G();P?.name||"";
 
 const scheduledTasks = false;
 
@@ -1147,7 +1147,7 @@ function publicAssetsURL(...path) {
 
 const warnOnceSet = /* @__PURE__ */ new Set();
 const DEFAULT_ENDPOINT = "https://api.iconify.design";
-const _SaZXM1 = defineCachedEventHandler(async (event) => {
+const _x3Fdqh = defineCachedEventHandler(async (event) => {
   const url = getRequestURL(event);
   if (!url)
     return createError({ status: 400, message: "Invalid icon request" });
@@ -1205,12 +1205,12 @@ const _SaZXM1 = defineCachedEventHandler(async (event) => {
   // 1 week
 });
 
-const _lazy_1vhWFz = () => Promise.resolve().then(function () { return renderer$1; });
+const _lazy_8c81Yn = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
-  { route: '/__nuxt_error', handler: _lazy_1vhWFz, lazy: true, middleware: false, method: undefined },
-  { route: '/api/_nuxt_icon/:collection', handler: _SaZXM1, lazy: false, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_1vhWFz, lazy: true, middleware: false, method: undefined }
+  { route: '/__nuxt_error', handler: _lazy_8c81Yn, lazy: true, middleware: false, method: undefined },
+  { route: '/api/_nuxt_icon/:collection', handler: _x3Fdqh, lazy: false, middleware: false, method: undefined },
+  { route: '/**', handler: _lazy_8c81Yn, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {
@@ -1343,11 +1343,11 @@ runNitroPlugins(nitroApp$1);
 const nitroApp = useNitroApp();
 const server = new Server(toNodeListener(nitroApp.h3App));
 function getAddress() {
-  if (d === "stackblitz" || process.env.NITRO_NO_UNIX_SOCKET || process.versions.bun) {
+  if (p === "stackblitz" || process.env.NITRO_NO_UNIX_SOCKET || process.versions.bun) {
     return 0;
   }
   const socketName = `worker-${process.pid}-${threadId}.sock`;
-  if (_) {
+  if (A) {
     return join(String.raw`\\.\pipe\nitro`, socketName);
   }
   const socketDir = join(tmpdir(), "nitro");
@@ -1475,8 +1475,8 @@ const renderSSRHeadOptions = {"omitLineBreaks":false};
 
 globalThis.__buildAssetsURL = buildAssetsURL;
 globalThis.__publicAssetsURL = publicAssetsURL;
-const getClientManifest = () => import('file:///home/reuben/.Documents/ElevateYou-1/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
-const getServerEntry = () => import('file:///home/reuben/.Documents/ElevateYou-1/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
+const getClientManifest = () => import('file:///home/saintreborn/Documents/ElevateYou/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
+const getServerEntry = () => import('file:///home/saintreborn/Documents/ElevateYou/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
 const getSSRStyles = lazyCachedFunction(() => Promise.resolve().then(function () { return styles$1; }).then((r) => r.default || r));
 const getSSRRenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();

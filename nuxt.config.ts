@@ -5,7 +5,9 @@ export default defineNuxtConfig({
   modules: ["@nuxt/ui", "@pinia/nuxt"],
 
   compatibilityDate: "2025-02-15",
-  plugins: ["~/plugins/firebase.js"],
+    plugins: [
+        '~/plugins/firebase.client.js'  // ← .client.js is CRUCIAL
+    ],
 
   runtimeConfig: {
     public: {
@@ -25,7 +27,7 @@ export default defineNuxtConfig({
       VitePWA({
         registerType: "autoUpdate",
         manifest: {
-          name: "Growth Tracker",
+          name: "Project Hub",
           short_name: "Growth",
           theme_color: "#10B981",
           icons: [

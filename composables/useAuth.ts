@@ -1,15 +1,12 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-    // Only run on client side
     if (process.server) return
 
     const { $auth } = useNuxtApp()
 
-    // Redirect to login if not authenticated and trying to access protected routes
-    if (!$auth.currentUser && to.path === '/dashboard') {
+    if (!$auth.currentUser && to.path !== '/login' && to.path !== '/') {
         return navigateTo('/login')
     }
 
-    // Redirect to dashboard if authenticated and trying to access auth pages
     if ($auth.currentUser && (to.path === '/login' || to.path === '/')) {
         return navigateTo('/dashboard')
     }

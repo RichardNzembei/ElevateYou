@@ -2,8 +2,12 @@
 import type { DefineComponent, SlotsType } from 'vue'
 type IslandComponent<T extends DefineComponent> = T & DefineComponent<{}, {refresh: () => Promise<void>}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, SlotsType<{ fallback: { error: unknown } }>>
 interface _GlobalComponents {
-      'NavigationBar': typeof import("../components/navigationBar.vue")['default']
-    'OverView': typeof import("../components/overView.vue")['default']
+      'DocsDocEditor': typeof import("../components/docs/DocEditor.vue")['default']
+    'DocsDocTreeItem': typeof import("../components/docs/DocTreeItem.vue")['default']
+    'DocsSidebar': typeof import("../components/docs/DocsSidebar.vue")['default']
+    'LayoutAppSidebar': typeof import("../components/layout/AppSidebar.vue")['default']
+    'TaskKanbanBoard': typeof import("../components/task/KanbanBoard.vue")['default']
+    'UiModal': typeof import("../components/ui/Modal.vue")['default']
     'UAccordion': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']
     'UAlert': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']
     'UAvatar': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Avatar.vue")['default']
@@ -80,8 +84,12 @@ interface _GlobalComponents {
     'UModals': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
     'USlideovers': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
     'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-      'LazyNavigationBar': typeof import("../components/navigationBar.vue")['default']
-    'LazyOverView': typeof import("../components/overView.vue")['default']
+      'LazyDocsDocEditor': typeof import("../components/docs/DocEditor.vue")['default']
+    'LazyDocsDocTreeItem': typeof import("../components/docs/DocTreeItem.vue")['default']
+    'LazyDocsSidebar': typeof import("../components/docs/DocsSidebar.vue")['default']
+    'LazyLayoutAppSidebar': typeof import("../components/layout/AppSidebar.vue")['default']
+    'LazyTaskKanbanBoard': typeof import("../components/task/KanbanBoard.vue")['default']
+    'LazyUiModal': typeof import("../components/ui/Modal.vue")['default']
     'LazyUAccordion': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']
     'LazyUAlert': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']
     'LazyUAvatar': typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Avatar.vue")['default']
@@ -164,8 +172,12 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
-export const NavigationBar: typeof import("../components/navigationBar.vue")['default']
-export const OverView: typeof import("../components/overView.vue")['default']
+export const DocsDocEditor: typeof import("../components/docs/DocEditor.vue")['default']
+export const DocsDocTreeItem: typeof import("../components/docs/DocTreeItem.vue")['default']
+export const DocsSidebar: typeof import("../components/docs/DocsSidebar.vue")['default']
+export const LayoutAppSidebar: typeof import("../components/layout/AppSidebar.vue")['default']
+export const TaskKanbanBoard: typeof import("../components/task/KanbanBoard.vue")['default']
+export const UiModal: typeof import("../components/ui/Modal.vue")['default']
 export const UAccordion: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']
 export const UAlert: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']
 export const UAvatar: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Avatar.vue")['default']
@@ -242,8 +254,12 @@ export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components
 export const UModals: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 export const USlideovers: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-export const LazyNavigationBar: typeof import("../components/navigationBar.vue")['default']
-export const LazyOverView: typeof import("../components/overView.vue")['default']
+export const LazyDocsDocEditor: typeof import("../components/docs/DocEditor.vue")['default']
+export const LazyDocsDocTreeItem: typeof import("../components/docs/DocTreeItem.vue")['default']
+export const LazyDocsSidebar: typeof import("../components/docs/DocsSidebar.vue")['default']
+export const LazyLayoutAppSidebar: typeof import("../components/layout/AppSidebar.vue")['default']
+export const LazyTaskKanbanBoard: typeof import("../components/task/KanbanBoard.vue")['default']
+export const LazyUiModal: typeof import("../components/ui/Modal.vue")['default']
 export const LazyUAccordion: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Accordion.vue")['default']
 export const LazyUAlert: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Alert.vue")['default']
 export const LazyUAvatar: typeof import("../node_modules/@nuxt/ui/dist/runtime/components/elements/Avatar.vue")['default']

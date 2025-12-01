@@ -125,11 +125,12 @@ export interface NuxtCustomSchema {
     * 
     * - `server` - Fetch icons with a server handler
     * - `iconify` - Fetch icons with Iconify API, purely client-side
+    * - `none` - Do not fetch icons (use client bundle only)
     * 
     * `server` by default; `iconify` when `ssr: false`
     * 
     * 
-    * @enum server,iconify
+    * @enum server,iconify,none
     * 
     * @studioIcon material-symbols:cloud
    */
