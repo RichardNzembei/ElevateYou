@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import type { Workspace } from '@/types'
 
@@ -70,11 +70,30 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
 
     async function create(name: string, userId: string) {
+        const { auth } = useFirebase()
+        const user = auth.currentUser
+
         const docRef = await addDoc(collection(firestore, 'workspaces'), {
             name,
             ownerId: userId,
             createdAt: new Date(),
             updatedAt: new Date()
+        })
+
+        // Add creator as owner in the members subcollection
+        await setDoc(doc(firestore, 'workspaces', docRef.id, 'members', userId), {
+            email: user?.email || '',
+            displayName: user?.displayName || user?.email?.split('@')[0] || '',
+            photoURL: user?.photoURL || null,
+            role: 'owner',
+            joinedAt: new Date(),
+            isOnline: true
+        })
+
+        // Add workspace to user's workspaces subcollection
+        await setDoc(doc(firestore, 'users', userId, 'workspaces', docRef.id), {
+            role: 'owner',
+            joinedAt: new Date()
         })
 
         const newWorkspace = {

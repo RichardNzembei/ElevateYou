@@ -542,6 +542,29 @@ const updateWorkspace = async (updates: any) => {
 }
 
 // Lifecycle
+// One-time fix: ensure workspace owner is in the members subcollection
+const migrateOwnerMembership = async (workspace: any) => {
+  if (!user.value || workspace.ownerId !== user.value.uid) return
+  const { doc, getDoc, setDoc } = await import('firebase/firestore')
+  const { firestore } = useFirebase()
+  const memberRef = doc(firestore, 'workspaces', workspace.id, 'members', user.value.uid)
+  const memberSnap = await getDoc(memberRef)
+  if (!memberSnap.exists()) {
+    await setDoc(memberRef, {
+      email: user.value.email || '',
+      displayName: user.value.displayName || user.value.email?.split('@')[0] || '',
+      photoURL: user.value.photoURL || null,
+      role: 'owner',
+      joinedAt: new Date(),
+      isOnline: true
+    })
+    await setDoc(doc(firestore, 'users', user.value.uid, 'workspaces', workspace.id), {
+      role: 'owner',
+      joinedAt: new Date()
+    }, { merge: true })
+  }
+}
+
 onMounted(async () => {
   const { authReady } = useFirebase()
   await authReady
@@ -554,8 +577,9 @@ onMounted(async () => {
     }
   }, { immediate: true })
 
-  watch(() => workspaceStore.currentWorkspace, (workspace) => {
+  watch(() => workspaceStore.currentWorkspace, async (workspace) => {
     if (workspace) {
+      await migrateOwnerMembership(workspace)
       projectStore.listen(workspace.id)
       taskStore.listen(workspace.id)
     }
