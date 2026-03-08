@@ -292,7 +292,7 @@ import TaskCreateModal from '@/components/task/TaskCreateModal.vue'
 import MemberInviteModal from '@/components/member/MemberInviteModal.vue'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 
-definePageMeta({ layout: 'dashboard', middleware: 'auth', ssr: false })
+definePageMeta({ layout: 'dashboard', ssr: false })
 
 const { auth } = useFirebase()
 const router = useRouter()
