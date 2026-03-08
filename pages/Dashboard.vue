@@ -258,6 +258,7 @@
     <MemberInviteModal
       v-model="showInviteModal"
       :pending-invites="pendingInvites"
+      :project-name="projectStore.selectedProject?.name || ''"
       @invite="sendInvites"
       @cancel-invite="cancelInvite"
     />
@@ -484,6 +485,7 @@ const createNewRootDocFromModal = async () => {
 // Member actions
 const sendInvites = async (invites: { email: string; role: string }[]) => {
   if (!workspaceStore.currentWorkspace) return showError('No workspace selected')
+  if (!projectStore.selectedProject) return showError('No project selected')
   let successCount = 0
   let pendingCount = 0
   for (const inv of invites) {
@@ -492,7 +494,8 @@ const sendInvites = async (invites: { email: string; role: string }[]) => {
         inv.email,
         workspaceStore.currentWorkspace.id,
         inv.role as any,
-        workspaceStore.currentWorkspace.name || 'Workspace'
+        workspaceStore.currentWorkspace.name || 'Workspace',
+        projectStore.selectedProject.id
       )
       if (result.pending) pendingCount++
       else successCount++
@@ -501,7 +504,7 @@ const sendInvites = async (invites: { email: string; role: string }[]) => {
       showError(err.message || `Failed to invite ${inv.email}`)
     }
   }
-  if (successCount > 0) showSuccess(`${successCount} member${successCount > 1 ? 's' : ''} added!`)
+  if (successCount > 0) showSuccess(`${successCount} member${successCount > 1 ? 's' : ''} added to project!`)
   else if (pendingCount > 0) showSuccess(`${pendingCount} invite${pendingCount > 1 ? 's' : ''} sent! They'll join when they register.`)
   showInviteModal.value = false
   loadPendingInvites()
@@ -542,12 +545,15 @@ const updateWorkspace = async (updates: any) => {
 }
 
 // Lifecycle
-// One-time fix: ensure workspace owner is in the members subcollection
+// One-time fix: ensure workspace owner is in the members subcollection + project memberIds
 const migrateOwnerMembership = async (workspace: any) => {
   if (!user.value || workspace.ownerId !== user.value.uid) return
-  const { doc, getDoc, setDoc } = await import('firebase/firestore')
+  const { doc, getDoc, setDoc, collection, getDocs, query, where, updateDoc, arrayUnion } = await import('firebase/firestore')
   const { firestore } = useFirebase()
-  const memberRef = doc(firestore, 'workspaces', workspace.id, 'members', user.value.uid)
+  const uid = user.value.uid
+
+  // Fix workspace membership
+  const memberRef = doc(firestore, 'workspaces', workspace.id, 'members', uid)
   const memberSnap = await getDoc(memberRef)
   if (!memberSnap.exists()) {
     await setDoc(memberRef, {
@@ -558,10 +564,23 @@ const migrateOwnerMembership = async (workspace: any) => {
       joinedAt: new Date(),
       isOnline: true
     })
-    await setDoc(doc(firestore, 'users', user.value.uid, 'workspaces', workspace.id), {
+    await setDoc(doc(firestore, 'users', uid, 'workspaces', workspace.id), {
       role: 'owner',
       joinedAt: new Date()
     }, { merge: true })
+  }
+
+  // Fix project membership — add owner to all projects that don't have memberIds
+  const projectsSnap = await getDocs(
+    query(collection(firestore, 'projects'), where('workspaceId', '==', workspace.id))
+  )
+  for (const pDoc of projectsSnap.docs) {
+    const data = pDoc.data()
+    if (!data.memberIds || !data.memberIds.includes(uid)) {
+      await updateDoc(doc(firestore, 'projects', pDoc.id), {
+        memberIds: arrayUnion(uid)
+      })
+    }
   }
 }
 

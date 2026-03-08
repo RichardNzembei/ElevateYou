@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { collection, query, where, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, getDocs } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, addDoc, updateDoc, deleteDoc, doc, writeBatch, getDocs, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { ref } from 'vue'
 import type { Project } from '~/types'
 
@@ -11,7 +11,8 @@ export const useProjectStore = defineStore('project', () => {
     function listen(workspaceId: string) {
         if (unsubscribe) unsubscribe()
 
-        const { firestore } = useFirebase()
+        const { firestore, auth } = useFirebase()
+        const uid = auth.currentUser?.uid
         const q = query(
             collection(firestore, 'projects'),
             where('workspaceId', '==', workspaceId)
@@ -21,10 +22,20 @@ export const useProjectStore = defineStore('project', () => {
             projects.value = snap.docs
                 .map(d => ({ id: d.id, ...d.data() } as Project))
                 .filter(p => !p.archivedAt)
+                .filter(p => {
+                    // Show all projects if no memberIds set (legacy/migration)
+                    if (!p.memberIds || p.memberIds.length === 0) return true
+                    // Show if user is a member of the project
+                    return uid ? p.memberIds.includes(uid) : false
+                })
                 .sort((a, b) => a.name.localeCompare(b.name))
 
             if (!selectedProject.value && projects.value.length > 0) {
                 selectedProject.value = projects.value[0]
+            }
+            // If selected project was removed from view, reset
+            if (selectedProject.value && !projects.value.find(p => p.id === selectedProject.value!.id)) {
+                selectedProject.value = projects.value[0] || null
             }
         })
 
@@ -41,10 +52,16 @@ export const useProjectStore = defineStore('project', () => {
     }
 
     async function create(project: Partial<Project>) {
-        const { firestore } = useFirebase()
+        const { firestore, auth } = useFirebase()
+        const uid = auth.currentUser?.uid
         const now = new Date()
+
+        // Always include creator in memberIds
+        const memberIds = uid ? [uid] : []
+
         const optimistic = {
             ...project,
+            memberIds,
             id: '_temp_' + Date.now(),
             createdAt: now,
             updatedAt: now
@@ -57,6 +74,7 @@ export const useProjectStore = defineStore('project', () => {
         try {
             const docRef = await addDoc(collection(firestore, 'projects'), {
                 ...project,
+                memberIds,
                 createdAt: now,
                 updatedAt: now
             })
@@ -120,6 +138,22 @@ export const useProjectStore = defineStore('project', () => {
         }
     }
 
+    async function addMember(projectId: string, userId: string) {
+        const { firestore } = useFirebase()
+        await updateDoc(doc(firestore, 'projects', projectId), {
+            memberIds: arrayUnion(userId),
+            updatedAt: new Date()
+        })
+    }
+
+    async function removeMember(projectId: string, userId: string) {
+        const { firestore } = useFirebase()
+        await updateDoc(doc(firestore, 'projects', projectId), {
+            memberIds: arrayRemove(userId),
+            updatedAt: new Date()
+        })
+    }
+
     return {
         projects,
         selectedProject,
@@ -127,6 +161,8 @@ export const useProjectStore = defineStore('project', () => {
         stopListening,
         create,
         update,
-        remove
+        remove,
+        addMember,
+        removeMember
     }
 })

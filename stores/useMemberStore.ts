@@ -1,6 +1,6 @@
 // stores/useMemberStore.ts
 import { defineStore } from 'pinia'
-import { collection, doc, query, where, getDocs, getDoc, setDoc, deleteDoc, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, query, where, getDocs, getDoc, setDoc, deleteDoc, onSnapshot, addDoc, serverTimestamp, updateDoc, arrayUnion } from 'firebase/firestore'
 import { useFirebase } from '~/composables/firebase-client'
 
 export type Role = 'owner' | 'admin' | 'member' | 'viewer'
@@ -139,7 +139,8 @@ export const useMemberStore = defineStore('member', () => {
         email: string,
         workspaceId: string,
         role: Role = 'member',
-        workspaceName: string = ''
+        workspaceName: string = '',
+        projectId?: string
     ): Promise<{ success: boolean; pending: boolean }> {
         try {
             const normalizedEmail = email.toLowerCase().trim()
@@ -155,33 +156,38 @@ export const useMemberStore = defineStore('member', () => {
                 const userData = userDoc.data()
                 const userId = userDoc.id
 
-                // Check if already a member
+                // Check if already a workspace member
                 const existingMember = members.value.get(userId)
-                if (existingMember) {
-                    throw new Error('User is already a member of this workspace')
+                if (!existingMember) {
+                    // Add to workspace members
+                    await setDoc(doc(firestore, 'workspaces', workspaceId, 'members', userId), {
+                        email: userData.email,
+                        displayName: userData.displayName || normalizedEmail.split('@')[0],
+                        photoURL: userData.photoURL || null,
+                        role,
+                        joinedAt: new Date(),
+                        isOnline: false
+                    })
+
+                    // Add workspace to user's workspaces
+                    await setDoc(doc(firestore, 'users', userId, 'workspaces', workspaceId), {
+                        role,
+                        joinedAt: new Date()
+                    })
                 }
 
-                // Add to workspace members
-                await setDoc(doc(firestore, 'workspaces', workspaceId, 'members', userId), {
-                    email: userData.email,
-                    displayName: userData.displayName || normalizedEmail.split('@')[0],
-                    photoURL: userData.photoURL || null,
-                    role,
-                    joinedAt: new Date(),
-                    isOnline: false
-                })
-
-                // Add workspace to user's workspaces
-                await setDoc(doc(firestore, 'users', userId, 'workspaces', workspaceId), {
-                    role,
-                    joinedAt: new Date()
-                })
+                // Add user to the project's memberIds
+                if (projectId) {
+                    await updateDoc(doc(firestore, 'projects', projectId), {
+                        memberIds: arrayUnion(userId)
+                    })
+                }
 
                 return { success: true, pending: false }
             } else {
                 // ── User doesn't exist → store a pending invite ──
 
-                // Check if there is already a pending invite for this email + workspace
+                // Check if there is already a pending invite for this email + workspace + project
                 const invitesRef = collection(firestore, 'invites')
                 const existingInviteQuery = query(
                     invitesRef,
@@ -191,7 +197,19 @@ export const useMemberStore = defineStore('member', () => {
                 )
                 const existingInvites = await getDocs(existingInviteQuery)
                 if (!existingInvites.empty) {
-                    throw new Error('A pending invite already exists for this email in this workspace')
+                    // If same workspace invite exists but for a different project, update it
+                    if (projectId) {
+                        const existingDoc = existingInvites.docs[0]
+                        const existingData = existingDoc.data()
+                        const existingProjectIds = existingData.projectIds || []
+                        if (!existingProjectIds.includes(projectId)) {
+                            await updateDoc(doc(firestore, 'invites', existingDoc.id), {
+                                projectIds: arrayUnion(projectId)
+                            })
+                        }
+                        return { success: true, pending: true }
+                    }
+                    throw new Error('A pending invite already exists for this email')
                 }
 
                 const invitedByUid = auth.currentUser?.uid || 'unknown'
@@ -201,6 +219,7 @@ export const useMemberStore = defineStore('member', () => {
                     workspaceId,
                     workspaceName,
                     role,
+                    projectIds: projectId ? [projectId] : [],
                     invitedBy: invitedByUid,
                     invitedAt: serverTimestamp(),
                     status: 'pending'
@@ -296,6 +315,14 @@ export const useMemberStore = defineStore('member', () => {
                     role: invite.role || 'member',
                     joinedAt: new Date()
                 })
+
+                // Add user to each project they were invited to
+                const projectIds = invite.projectIds || []
+                for (const pid of projectIds) {
+                    await updateDoc(doc(firestore, 'projects', pid), {
+                        memberIds: arrayUnion(userId)
+                    })
+                }
 
                 // Mark invite as accepted
                 await setDoc(doc(firestore, 'invites', inviteDoc.id), {

@@ -1,5 +1,5 @@
 <template>
-  <Modal :modelValue="modelValue" @update:modelValue="$emit('update:modelValue', $event)" title="Invite Team Members">
+  <Modal :modelValue="modelValue" @update:modelValue="$emit('update:modelValue', $event)" :title="projectName ? `Invite to ${projectName}` : 'Invite Team Members'">
     <div class="space-y-5">
       <div>
         <label class="block text-[13px] font-medium text-neutral-700 mb-1.5">Email Address</label>
@@ -37,8 +37,8 @@
         <div class="flex gap-2.5">
           <svg class="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <div class="text-[13px] text-neutral-500 space-y-1 leading-relaxed">
-            <p>If the user has an account, they'll be added instantly.</p>
-            <p>If not, a pending invite will be saved. They'll auto-join when they register.</p>
+            <p>Members will be added to this project and workspace.</p>
+            <p>If the user has an account, they'll be added instantly. If not, they'll auto-join when they register.</p>
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import Modal from '@/components/ui/Modal.vue'
 
-defineProps<{ modelValue: boolean; pendingInvites?: any[] }>()
+defineProps<{ modelValue: boolean; pendingInvites?: any[]; projectName?: string }>()
 const emit = defineEmits(['update:modelValue', 'invite', 'cancel-invite'])
 
 const email = ref('')

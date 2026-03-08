@@ -28,6 +28,7 @@ export interface Project {
     startDate?: string | null
     endDate?: string | null
     ownerId?: string
+    memberIds?: string[]
     archivedAt?: Timestamp | Date | null
     createdAt: Timestamp | Date
     updatedAt: Timestamp | Date

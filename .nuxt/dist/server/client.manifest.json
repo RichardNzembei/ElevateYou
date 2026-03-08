@@ -1,18 +1,309 @@
 {
-  "@vite/client": {
-    "prefetch": true,
-    "isEntry": true,
-    "file": "@vite/client",
-    "css": [],
-    "module": true,
-    "resourceType": "script"
-  },
-  "/Users/richard/Documents/ElevateYou/node_modules/nuxt/dist/app/entry.js": {
+  "_CL4HhqKM.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
+    "file": "CL4HhqKM.js",
+    "name": "firebase-client",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "_CWFpiGr6.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CWFpiGr6.js",
+    "name": "useMemberStore",
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_CL4HhqKM.js"
+    ]
+  },
+  "_DlAUqK2U.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "DlAUqK2U.js",
+    "name": "_plugin-vue_export-helper"
+  },
+  "_m9CbGkAS.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "m9CbGkAS.js",
+    "name": "nuxt-link",
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "layouts/auth.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "C4J9P02B.js",
+    "name": "auth",
+    "src": "layouts/auth.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_DlAUqK2U.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "layouts/dashboard.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "Dmcylfwx.js",
+    "name": "dashboard",
+    "src": "layouts/dashboard.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_DlAUqK2U.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "layouts/default.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "DE4GsNWy.js",
+    "name": "default",
+    "src": "layouts/default.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_m9CbGkAS.js",
+      "_DlAUqK2U.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "node_modules/@nuxt/icon/dist/runtime/components/index.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CFdIfF45.js",
+    "name": "index",
+    "src": "node_modules/@nuxt/icon/dist/runtime/components/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "node_modules/firebase/app-check/dist/esm/index.esm.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CfdB3FP7.js",
+    "name": "index.esm",
+    "src": "node_modules/firebase/app-check/dist/esm/index.esm.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "node_modules/nuxt/dist/app/components/error-404.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CP9CeGgy.js",
+    "name": "error-404",
+    "src": "node_modules/nuxt/dist/app/components/error-404.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_m9CbGkAS.js",
+      "_DlAUqK2U.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ],
+    "css": []
+  },
+  "error-404.C3V-3Mc4.css": {
+    "file": "error-404.C3V-3Mc4.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
+  },
+  "node_modules/nuxt/dist/app/components/error-500.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "Bsft_jyb.js",
+    "name": "error-500",
+    "src": "node_modules/nuxt/dist/app/components/error-500.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_DlAUqK2U.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ],
+    "css": []
+  },
+  "error-500.dGVH929u.css": {
+    "file": "error-500.dGVH929u.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
+  },
+  "node_modules/nuxt/dist/app/entry.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "C4j7Ownr.js",
+    "name": "entry",
+    "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
-    "file": "/Users/richard/Documents/ElevateYou/node_modules/nuxt/dist/app/entry.js"
+    "dynamicImports": [
+      "layouts/auth.vue",
+      "layouts/dashboard.vue",
+      "layouts/default.vue",
+      "node_modules/workbox-window/build/workbox-window.prod.es5.mjs",
+      "node_modules/firebase/app-check/dist/esm/index.esm.js",
+      "node_modules/nuxt/dist/app/components/error-404.vue",
+      "node_modules/nuxt/dist/app/components/error-500.vue"
+    ],
+    "_globalCSS": true
+  },
+  "node_modules/workbox-window/build/workbox-window.prod.es5.mjs": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "DL_hIMXg.js",
+    "name": "workbox-window.prod.es5",
+    "src": "node_modules/workbox-window/build/workbox-window.prod.es5.mjs",
+    "isDynamicEntry": true
+  },
+  "pages/Dashboard.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "BMIPxiQi.js",
+    "name": "Dashboard",
+    "src": "pages/Dashboard.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_CL4HhqKM.js",
+      "_CWFpiGr6.js",
+      "_DlAUqK2U.js"
+    ],
+    "dynamicImports": [
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js"
+    ],
+    "css": []
+  },
+  "Dashboard.DVvm1ZUX.css": {
+    "file": "Dashboard.DVvm1ZUX.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
+  },
+  "pages/Login.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CY5kArEB.js",
+    "name": "Login",
+    "src": "pages/Login.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_m9CbGkAS.js",
+      "_CWFpiGr6.js",
+      "_CL4HhqKM.js"
+    ],
+    "dynamicImports": [
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js"
+    ]
+  },
+  "pages/forgot-password.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "Lt6Z9oCT.js",
+    "name": "forgot-password",
+    "src": "pages/forgot-password.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_m9CbGkAS.js",
+      "_CL4HhqKM.js",
+      "_DlAUqK2U.js"
+    ],
+    "dynamicImports": [
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js"
+    ],
+    "css": []
+  },
+  "forgot-password.BG5t4bYb.css": {
+    "file": "forgot-password.BG5t4bYb.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
+  },
+  "pages/index.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CIZVA4tt.js",
+    "name": "index",
+    "src": "pages/index.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_m9CbGkAS.js",
+      "node_modules/nuxt/dist/app/entry.js"
+    ]
+  },
+  "pages/register.vue": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "liWsCIwH.js",
+    "name": "register",
+    "src": "pages/register.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_m9CbGkAS.js",
+      "_CWFpiGr6.js",
+      "_CL4HhqKM.js",
+      "_DlAUqK2U.js"
+    ],
+    "dynamicImports": [
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js",
+      "_CL4HhqKM.js"
+    ],
+    "css": []
+  },
+  "register.qr_KQYDP.css": {
+    "file": "register.qr_KQYDP.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
   }
 }
