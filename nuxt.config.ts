@@ -38,6 +38,19 @@ export default defineNuxtConfig({
         },
       ],
     },
+    workbox: {
+      navigateFallback: null,
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/.*\/.*/,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'pages',
+            expiration: { maxEntries: 50, maxAgeSeconds: 86400 }
+          }
+        }
+      ]
+    },
     devOptions: {
       enabled: false,
     },
