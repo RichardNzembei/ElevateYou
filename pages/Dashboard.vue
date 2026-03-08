@@ -179,9 +179,10 @@
           <!-- MEMBERS -->
           <MembersView
               v-if="activeView === 'members'"
-              :members="memberStore.membersList"
-              :pending-invites="pendingInvites"
+              :members="projectMembers"
+              :pending-invites="projectPendingInvites"
               :can-manage-members="canManageMembers"
+              :project-name="projectStore.selectedProject?.name || ''"
               @invite="showInviteModal = true"
               @update-role="updateMemberRole"
               @remove-member="removeMember"
@@ -346,6 +347,25 @@ const canManageMembers = computed(() => memberStore.hasPermission('manage_member
 const canManageProjects = computed(() => memberStore.hasPermission('manage_projects'))
 const canManageTasks = computed(() => memberStore.hasPermission('manage_tasks'))
 const canManageDocs = computed(() => memberStore.hasPermission('manage_docs'))
+
+// Project members — filter workspace members to only those in the current project's memberIds
+const projectMembers = computed(() => {
+  const project = projectStore.selectedProject
+  if (!project || !project.memberIds || project.memberIds.length === 0) {
+    return memberStore.membersList
+  }
+  return memberStore.membersList.filter(m => project.memberIds!.includes(m.uid))
+})
+
+// Project pending invites — filter to invites that include the current project
+const projectPendingInvites = computed(() => {
+  const project = projectStore.selectedProject
+  if (!project) return pendingInvites.value
+  return pendingInvites.value.filter(inv => {
+    if (!inv.projectIds || inv.projectIds.length === 0) return true
+    return inv.projectIds.includes(project.id)
+  })
+})
 
 const allProjectTasks = computed(() => {
   if (!projectStore.selectedProject) return []
@@ -528,10 +548,12 @@ const updateMemberRole = async (userId: string, newRole: string) => {
 
 const removeMember = async (userId: string) => {
   if (!workspaceStore.currentWorkspace) return
-  if (!confirm('Remove this member from the workspace?')) return
+  if (!projectStore.selectedProject) return
+  if (!confirm('Remove this member from the project?')) return
   try {
-    await memberStore.removeMember(workspaceStore.currentWorkspace.id, userId)
-    showSuccess('Member removed')
+    // Remove from project memberIds
+    await projectStore.removeMember(projectStore.selectedProject.id, userId)
+    showSuccess('Member removed from project')
   } catch { showError('Failed to remove member') }
 }
 

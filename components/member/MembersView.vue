@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="card px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
       <div>
-        <h2 class="text-[14px] font-bold text-neutral-900">Team Members</h2>
-        <p class="text-[11px] text-neutral-500 mt-0.5">{{ members.length }} active member{{ members.length !== 1 ? 's' : '' }}{{ pendingInvites.length ? ` · ${pendingInvites.length} pending` : '' }}</p>
+        <h2 class="text-[14px] font-bold text-neutral-900">{{ projectName ? `${projectName} — Team` : 'Team Members' }}</h2>
+        <p class="text-[11px] text-neutral-500 mt-0.5">{{ members.length }} member{{ members.length !== 1 ? 's' : '' }} on this project{{ pendingInvites?.length ? ` · ${pendingInvites.length} pending` : '' }}</p>
       </div>
       <button v-if="canManageMembers" @click="$emit('invite')" class="btn-primary flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
@@ -130,7 +130,7 @@ const taskStore = useTaskStore()
 const projectStore = useProjectStore()
 const { auth } = useFirebase()
 
-defineProps<{ members: any[]; pendingInvites?: any[]; canManageMembers?: boolean }>()
+defineProps<{ members: any[]; pendingInvites?: any[]; canManageMembers?: boolean; projectName?: string }>()
 defineEmits(['invite', 'update-role', 'remove-member', 'cancel-invite', 'resend-invite'])
 
 const showRoleGuide = ref(false)

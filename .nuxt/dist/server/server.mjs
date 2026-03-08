@@ -625,7 +625,7 @@ const _routes = [
     name: "Dashboard",
     path: "/Dashboard",
     meta: __nuxt_page_meta$4,
-    component: () => import("./_nuxt/Dashboard-Dj-EIm6M.js")
+    component: () => import("./_nuxt/Dashboard-BiSUgi_k.js")
   },
   {
     name: "forgot-password",
@@ -643,13 +643,13 @@ const _routes = [
     name: "Login",
     path: "/Login",
     meta: __nuxt_page_meta$1,
-    component: () => import("./_nuxt/Login-CjmQuJXp.js")
+    component: () => import("./_nuxt/Login-MHtVYKIA.js")
   },
   {
     name: "register",
     path: "/register",
     meta: __nuxt_page_meta,
-    component: () => import("./_nuxt/register-0uoW4ksx.js")
+    component: () => import("./_nuxt/register-eLC4rSH-.js")
   }
 ];
 const _wrapInTransition = (props, children) => {

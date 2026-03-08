@@ -14,9 +14,12 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     function listen(userId: string) {
         if (unsubscribeOwned) unsubscribeOwned()
         if (unsubscribeMember) unsubscribeMember()
+        loading.value = true
 
         const ownedMap = new Map<string, Workspace>()
         const memberMap = new Map<string, Workspace>()
+        let ownedReady = false
+        let memberReady = false
 
         const mergeWorkspaces = () => {
             const merged = new Map([...ownedMap, ...memberMap])
@@ -24,7 +27,10 @@ export const useWorkspaceStore = defineStore('workspace', () => {
             if (!currentWorkspace.value && workspaces.value.length > 0) {
                 currentWorkspace.value = workspaces.value[0]
             }
-            loading.value = false
+            // Only set loading=false once both listeners have fired at least once
+            if (ownedReady && memberReady) {
+                loading.value = false
+            }
         }
 
         // Listen to owned workspaces
@@ -36,6 +42,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
         unsubscribeOwned = onSnapshot(ownedQuery, (snap) => {
             ownedMap.clear()
             snap.docs.forEach(d => ownedMap.set(d.id, { id: d.id, ...d.data() } as Workspace))
+            ownedReady = true
             mergeWorkspaces()
         })
 
@@ -52,6 +59,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
                 }
             })
             await Promise.all(fetches)
+            memberReady = true
             mergeWorkspaces()
         })
 

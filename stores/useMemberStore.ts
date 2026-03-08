@@ -254,6 +254,7 @@ export const useMemberStore = defineStore('member', () => {
                 workspaceId: d.data().workspaceId,
                 workspaceName: d.data().workspaceName,
                 role: d.data().role,
+                projectIds: d.data().projectIds || [],
                 invitedBy: d.data().invitedBy,
                 invitedAt: d.data().invitedAt?.toDate() || new Date(),
                 status: d.data().status
