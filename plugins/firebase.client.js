@@ -1,13 +1,10 @@
-// plugins/firebase.client.js   ← rename to .client.js !
 import { defineNuxtPlugin } from '#app'
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
 export default defineNuxtPlugin((nuxtApp) => {
-    // This file is .client.js → runs ONLY on client → no double init!
     const config = useRuntimeConfig().public
 
     const firebaseConfig = {
@@ -20,18 +17,28 @@ export default defineNuxtPlugin((nuxtApp) => {
         measurementId: config.firebaseMeasurementId,
     }
 
-    // THIS IS THE KEY: Prevent double initialization
     const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig)
 
     const auth = getAuth(app)
     const firestore = getFirestore(app)
     const storage = getStorage(app)
 
-    // Optional: App Check
-    if (config.recaptchaSiteKey) {
-        initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider(config.recaptchaSiteKey),
-            isTokenAutoRefreshEnabled: true,
+    // Enable offline persistence for faster loads and offline support
+    enableIndexedDbPersistence(firestore).catch((err) => {
+        if (err.code === 'failed-precondition') {
+            console.warn('Firestore persistence unavailable: multiple tabs open')
+        } else if (err.code === 'unimplemented') {
+            console.warn('Firestore persistence not supported in this browser')
+        }
+    })
+
+    // Only initialize App Check in production with a valid key
+    if (config.recaptchaSiteKey && typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+        import('firebase/app-check').then(({ initializeAppCheck, ReCaptchaV3Provider }) => {
+            initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider(config.recaptchaSiteKey),
+                isTokenAutoRefreshEnabled: true,
+            })
         })
     }
 

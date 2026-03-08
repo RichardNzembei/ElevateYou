@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: false, // Disable dark mode entirely
+  darkMode: false,
   content: [
     './components/**/*.{js,vue,ts}',
     './layouts/**/*.vue',
@@ -10,7 +10,11 @@ module.exports = {
     './error.vue',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };

@@ -1,16 +1,9 @@
-<!-- components/docs/DocsSidebar.vue -->
 <template>
-  <div class="bg-white rounded-2xl shadow-lg p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Docs & Pages</h3>
-      <button @click="$emit('create-root')" class="text-purple-600 hover:text-purple-700">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
+  <div>
+    <div v-if="rootDocs.length === 0" class="text-center py-4">
+      <p class="text-neutral-400 text-xs">No documents yet</p>
     </div>
-
-    <div class="space-y-1">
+    <div class="space-y-0.5">
       <DocTreeItem
           v-for="doc in rootDocs"
           :key="doc.id"

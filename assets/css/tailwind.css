@@ -1,10 +1,60 @@
-/* assets/css/tailwind.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+    body {
+        @apply text-neutral-900 bg-white;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        font-optical-sizing: auto;
+        letter-spacing: -0.011em;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    ::selection {
+        @apply bg-neutral-900 text-white;
+    }
+}
+
 @layer components {
+    .btn-primary {
+        @apply bg-neutral-900 text-white px-3.5 py-1.5 rounded-lg font-semibold text-[12px]
+               hover:bg-neutral-800 active:bg-neutral-950 active:scale-[0.98] transition-all duration-150
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-1;
+    }
+    .btn-secondary {
+        @apply bg-white text-neutral-700 px-3.5 py-1.5 rounded-lg font-semibold text-[12px]
+               hover:bg-neutral-50 active:bg-neutral-100 active:scale-[0.98] transition-all duration-150
+               border border-neutral-200 hover:border-neutral-300
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-1;
+    }
+    .btn-ghost {
+        @apply text-neutral-600 px-2.5 py-1.5 rounded-lg font-medium text-[12px]
+               hover:bg-neutral-100 active:bg-neutral-200 active:scale-[0.98] transition-all duration-150;
+    }
+    .btn-danger {
+        @apply bg-red-600 text-white px-3.5 py-1.5 rounded-lg font-semibold text-[12px]
+               hover:bg-red-700 active:bg-red-800 active:scale-[0.98] transition-all duration-150
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-1;
+    }
+    .input-field {
+        @apply w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-[12px]
+               focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-400
+               placeholder:text-neutral-400 transition-all duration-150;
+    }
     .card {
-        @apply grid grid-cols-4 gap-10 mt-6
+        @apply bg-white rounded-lg border border-neutral-200/80;
+    }
+    .badge {
+        @apply inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-semibold;
+    }
+    .section-title {
+        @apply text-[10px] font-semibold text-neutral-500 uppercase tracking-wider;
     }
 }

@@ -1,13 +1,47 @@
 import { defineNuxtConfig } from "nuxt/config";
-import { VitePWA } from "vite-plugin-pwa";
 
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui", "@pinia/nuxt"],
+  modules: [
+    "@nuxt/ui",
+    "@pinia/nuxt",
+    "@vite-pwa/nuxt",
+  ],
 
   compatibilityDate: "2025-02-15",
-    plugins: [
-        '~/plugins/firebase.client.js'  // ← .client.js is CRUCIAL
-    ],
+
+  plugins: [
+    '~/plugins/firebase.client.js'
+  ],
+
+  app: {
+    head: {
+      title: 'ElevateYou',
+      meta: [
+        { name: 'description', content: 'Open source project management platform' }
+      ]
+    }
+  },
+
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "ElevateYou",
+      short_name: "ElevateYou",
+      description: "Open source project management platform",
+      theme_color: "#171717",
+      background_color: "#ffffff",
+      icons: [
+        {
+          src: "/icon/192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+      ],
+    },
+    devOptions: {
+      enabled: false,
+    },
+  },
 
   runtimeConfig: {
     public: {
@@ -20,25 +54,5 @@ export default defineNuxtConfig({
       firebaseMeasurementId: process.env.FIREBASE_MEASUREMENT_ID,
       recaptchaSiteKey: process.env.NUXT_PUBLIC_RECAPTCHA_SITE_KEY,
     },
-  },
-
-  vite: {
-    plugins: [
-      VitePWA({
-        registerType: "autoUpdate",
-        manifest: {
-          name: "Project Hub",
-          short_name: "Growth",
-          theme_color: "#10B981",
-          icons: [
-            {
-              src: "/icon-192x192.png",
-              sizes: "192x192",
-              type: "image/png",
-            },
-          ],
-        },
-      }),
-    ],
   },
 });

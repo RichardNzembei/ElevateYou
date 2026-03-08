@@ -1,3 +1,26 @@
+# Dependencies
 node_modules
-.env
 
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+.output
+.nuxt
+dist
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+
+# Firebase
+.firebase
+firebase-debug.log
+
+# Logs
+*.log

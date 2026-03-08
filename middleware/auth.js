@@ -4,13 +4,13 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     const { $auth } = useNuxtApp()
 
-    // Redirect to login if not authenticated and trying to access protected routes
+    // Protected routes that require authentication
     if (!$auth.currentUser && to.path === '/dashboard') {
         return navigateTo('/login')
     }
 
-    // Redirect to dashboard if authenticated and trying to access auth pages
-    if ($auth.currentUser && (to.path === '/login' || to.path === '/')) {
+    // Redirect authenticated users away from auth pages to dashboard
+    if ($auth.currentUser && (to.path === '/login' || to.path === '/register')) {
         return navigateTo('/dashboard')
     }
 })

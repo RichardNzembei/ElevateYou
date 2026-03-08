@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { collection, query, where, onSnapshot, addDoc, updateDoc, doc } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs } from 'firebase/firestore'
 import { ref } from 'vue'
 import type { Workspace } from '@/types'
 
@@ -8,36 +8,62 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     const workspaces = ref<Workspace[]>([])
     const currentWorkspace = ref<Workspace | null>(null)
     const loading = ref(true)
-    let unsubscribe: (() => void) | null = null
+    let unsubscribeOwned: (() => void) | null = null
+    let unsubscribeMember: (() => void) | null = null
 
     function listen(userId: string) {
-        if (unsubscribe) unsubscribe()
+        if (unsubscribeOwned) unsubscribeOwned()
+        if (unsubscribeMember) unsubscribeMember()
 
-        const q = query(
-            collection(firestore, 'workspaces'),
-            where('ownerId', '==', userId)
-        )
+        const ownedMap = new Map<string, Workspace>()
+        const memberMap = new Map<string, Workspace>()
 
-        unsubscribe = onSnapshot(q, (snap) => {
-            workspaces.value = snap.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-            } as Workspace))
-
+        const mergeWorkspaces = () => {
+            const merged = new Map([...ownedMap, ...memberMap])
+            workspaces.value = Array.from(merged.values())
             if (!currentWorkspace.value && workspaces.value.length > 0) {
                 currentWorkspace.value = workspaces.value[0]
             }
             loading.value = false
+        }
+
+        // Listen to owned workspaces
+        const ownedQuery = query(
+            collection(firestore, 'workspaces'),
+            where('ownerId', '==', userId)
+        )
+
+        unsubscribeOwned = onSnapshot(ownedQuery, (snap) => {
+            ownedMap.clear()
+            snap.docs.forEach(d => ownedMap.set(d.id, { id: d.id, ...d.data() } as Workspace))
+            mergeWorkspaces()
         })
 
-        return unsubscribe
+        // Listen to workspaces where user is a member (via user's workspaces subcollection)
+        const memberWsRef = collection(firestore, 'users', userId, 'workspaces')
+        unsubscribeMember = onSnapshot(memberWsRef, async (snap) => {
+            memberMap.clear()
+            const fetches = snap.docs.map(async (wsDoc) => {
+                const wsId = wsDoc.id
+                if (ownedMap.has(wsId)) return // skip already tracked owned workspaces
+                const wsSnap = await getDoc(doc(firestore, 'workspaces', wsId))
+                if (wsSnap.exists()) {
+                    memberMap.set(wsId, { id: wsId, ...wsSnap.data() } as Workspace)
+                }
+            })
+            await Promise.all(fetches)
+            mergeWorkspaces()
+        })
+
+        return () => {
+            if (unsubscribeOwned) unsubscribeOwned()
+            if (unsubscribeMember) unsubscribeMember()
+        }
     }
 
     function stopListening() {
-        if (unsubscribe) {
-            unsubscribe()
-            unsubscribe = null
-        }
+        if (unsubscribeOwned) { unsubscribeOwned(); unsubscribeOwned = null }
+        if (unsubscribeMember) { unsubscribeMember(); unsubscribeMember = null }
         workspaces.value = []
         currentWorkspace.value = null
         loading.value = true

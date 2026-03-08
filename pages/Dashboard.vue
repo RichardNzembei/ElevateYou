@@ -1,526 +1,268 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 text-black">
-    <!-- Navigation -->
-    <nav class="bg-white/80 backdrop-blur-lg shadow-md sticky top-0 z-40 border-b border-gray-100">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-6">
-          <!-- Logo -->
-          <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-r from-purple-500 to-blue-600 p-2 rounded-lg">
-              <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">ProjectHub</h1>
-          </div>
+  <div class="min-h-screen bg-[#fafafa] text-neutral-900">
+    <!-- Sidebar -->
+    <DashboardSidebar
+      :collapsed="sidebarCollapsed"
+      :mobile-open="mobileSidebarOpen"
+      :active-view="activeView"
+      :workspaces="workspaceStore.workspaces"
+      :current-workspace="workspaceStore.currentWorkspace"
+      :projects="projectStore.projects"
+      :selected-project-id="projectStore.selectedProject?.id || null"
+      :user-initials="userInitials"
+      :user-email="user?.email || ''"
+      :user-role="currentUserRole || 'member'"
+      @toggle-collapse="sidebarCollapsed = !sidebarCollapsed"
+      @close-mobile="mobileSidebarOpen = false"
+      @navigate="activeView = $event"
+      @workspace-change="onWorkspaceChange($event)"
+      @new-project="showNewProjectModal = true"
+      @select-project="selectProject($event)"
+      @new-task="showNewTaskModal = true"
+      @open-settings="showSettings = true"
+      @logout="logout"
+    />
 
-          <!-- View Tabs Navigation -->
-          <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
-            <button
-                @click="activeView = 'tasks'"
-                :class="activeView === 'tasks' ? 'bg-white shadow-md text-purple-700' : 'text-gray-600'"
-                class="px-5 py-2 rounded-lg font-medium transition hover:text-purple-600"
-            >
-              <span class="flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                Tasks
+    <!-- Main area -->
+    <div :class="sidebarCollapsed ? 'lg:pl-[52px]' : 'lg:pl-[220px]'" class="transition-all duration-200">
+      <!-- Top bar -->
+      <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+        <div class="flex items-center justify-between h-11 px-4 sm:px-5 lg:px-6">
+          <div class="flex items-center gap-2">
+            <button @click="mobileSidebarOpen = true" class="lg:hidden p-1.5 rounded-md hover:bg-neutral-100 text-neutral-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+
+            <nav class="flex items-center gap-1.5 text-[12px]">
+              <span class="text-neutral-400 hidden sm:inline">{{ workspaceStore.currentWorkspace?.name }}</span>
+              <svg v-if="projectStore.selectedProject" class="w-3.5 h-3.5 text-neutral-300 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span v-if="projectStore.selectedProject" class="font-semibold text-neutral-900 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: projectStore.selectedProject.color }"></span>
+                {{ projectStore.selectedProject.name }}
               </span>
-            </button>
-            <button
-                @click="activeView = 'docs'"
-                :class="activeView === 'docs' ? 'bg-white shadow-md text-purple-700' : 'text-gray-600'"
-                class="px-5 py-2 rounded-lg font-medium transition hover:text-purple-600"
-            >
-              <span class="flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Docs
-              </span>
-            </button>
+              <span v-else class="font-semibold text-neutral-900">Dashboard</span>
+            </nav>
           </div>
 
-          <!-- Workspace Switcher -->
-          <select
-              v-if="workspaceStore.workspaces.length > 0"
-              v-model="workspaceStore.currentWorkspace"
-              class="px-4 py-2 border border-gray-200 rounded-xl bg-white/70 text-sm font-medium focus:ring-2 focus:ring-purple-500"
-              @change="onWorkspaceChange"
-          >
-            <option v-for="ws in workspaceStore.workspaces" :key="ws.id" :value="ws">
-              {{ ws.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <!-- Notifications -->
-          <button class="relative p-2 hover:bg-gray-100 rounded-xl transition">
-            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          <!-- User Menu -->
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm">
-              {{ userInitials }}
-            </div>
-            <button @click="logout" class="text-sm text-gray-600 hover:text-red-600 font-medium">
-              Logout
+          <div class="flex items-center gap-2">
+            <button @click="showSearch = !showSearch" class="p-1.5 rounded-md hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
+            <button v-if="projectStore.selectedProject && canManageTasks" @click="showNewTaskModal = true" class="btn-primary hidden sm:flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              New Task
             </button>
           </div>
         </div>
-      </div>
-    </nav>
 
-    <!-- Main Layout -->
-    <div class="max-w-7xl mx-auto px-6 py-8 flex gap-8">
-      <!-- Enhanced Sidebar -->
-      <aside v-if="activeView === 'tasks'" class="w-80 space-y-6">
-        <!-- Projects Sidebar -->
-        <AppSidebar @new-project="showNewProjectModal = true" @delete-project="handleDeleteProject" />
-
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Docs & Pages</h3>
-            <button @click="showNewDocModal = true" class="text-purple-600 hover:text-purple-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-
-          <!-- REAL DOCS SIDEBAR -->
-          <DocsSidebar
-              @select-doc="openDoc"
-              @create-root="showNewDocModal = true"
-              @create-child="createNewChildDoc"
-          />
-        </div>
-
-        <!-- Team Members -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Team</h3>
-            <button @click="showInviteModal = true" class="text-purple-600 hover:text-purple-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="space-y-3">
-            <div v-for="member in memberStore.membersList" :key="member.uid"
-                 class="flex items-center justify-between group">
-              <div class="flex items-center gap-3">
-                <div class="relative">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center font-bold">
-                    {{ member.displayName?.[0] || member.email[0].toUpperCase() }}
-                  </div>
-                  <div v-if="member.isOnline" class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                </div>
-                <div>
-                  <p class="font-medium text-sm">{{ member.displayName || member.email }}</p>
-                  <p class="text-xs text-gray-500">{{ member.role }}</p>
-                </div>
-              </div>
-              <span v-if="member.role === 'owner'" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Owner</span>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Main Content Area -->
-      <main class="flex-1">
-        <!-- TASKS VIEW -->
-        <div v-if="activeView === 'tasks'">
-          <!-- No Project Selected -->
-          <div v-if="!projectStore.selectedProject" class="bg-white/70 backdrop-blur rounded-3xl shadow-xl p-16 text-center">
-            <div class="bg-gradient-to-r from-purple-100 to-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg class="w-14 h-14 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2" />
-              </svg>
-            </div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-3">Welcome to ProjectHub</h2>
-            <p class="text-gray-600 mb-8">Select a project or create a new one to get started</p>
-            <button @click="showNewProjectModal = true" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition shadow-lg">
-              Create Your First Project
-            </button>
-          </div>
-
-          <!-- Project View -->
-          <div v-else>
-            <!-- Header -->
-            <div class="bg-white/80 backdrop-blur rounded-3xl shadow-xl p-8 mb-6">
-              <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-4">
-                  <div class="w-8 h-8 rounded-full" :style="{ backgroundColor: projectStore.selectedProject?.color }"></div>
-                  <div>
-                    <h1 class="text-4xl font-bold text-gray-900">{{ projectStore.selectedProject?.name }}</h1>
-                    <p class="text-gray-500">{{ getProjectTaskCount }} tasks • {{ filteredProjectTasks.length }} shown</p>
-                  </div>
-                </div>
-                <button @click="showNewTaskModal = true" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold flex items-center gap-2 hover:scale-105 transition shadow-lg">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  New Task
-                </button>
-              </div>
-
-              <!-- View Switcher -->
-              <div class="flex gap-2 bg-gray-100 p-1 rounded-xl w-fit">
-                <button @click="currentView = 'list'" :class="currentView === 'list' ? 'bg-white shadow-md text-purple-700' : 'text-gray-600'" class="px-5 py-2.5 rounded-lg font-medium transition">
-                  List
-                </button>
-                <button @click="currentView = 'board'" :class="currentView === 'board' ? 'bg-white shadow-md text-purple-700' : 'text-gray-600'" class="px-5 py-2.5 rounded-lg font-medium transition">
-                  Board
-                </button>
-                <button @click="currentView = 'calendar'" :class="currentView === 'calendar' ? 'bg-white shadow-md text-purple-700' : 'text-gray-600'" class="px-5 py-2.5 rounded-lg font-medium transition">
-                  Calendar
-                </button>
-              </div>
-            </div>
-
-            <!-- Tasks Content -->
-            <div v-if="currentView === 'list'">
-              <!-- Filters -->
-              <div class="bg-white/70 backdrop-blur rounded-2xl shadow-lg p-4 mb-6 flex items-center gap-4">
-                <div class="flex-1 flex items-center gap-3 bg-gray-100 rounded-xl px-4 py-3">
-                  <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <input v-model="taskStore.searchQuery" type="text" placeholder="Search tasks..." class="bg-transparent outline-none flex-1" />
-                </div>
-                <select v-model="taskStore.filterStatus" class="px-4 py-3 rounded-xl border border-gray-200 bg-white">
-                  <option value="all">All Status</option>
-                  <option value="todo">To Do</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="done">Done</option>
-                </select>
-                <select v-model="taskStore.filterPriority" class="px-4 py-3 rounded-xl border border-gray-200 bg-white">
-                  <option value="all">All Priority</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                </select>
-              </div>
-
-              <!-- Task List -->
-              <div v-if="filteredProjectTasks.length === 0" class="text-center py-20 text-gray-500">
-                <p class="text-xl">No tasks found. Create your first one!</p>
-              </div>
-              <div v-else class="space-y-4">
-                <div
-                    v-for="task in filteredProjectTasks"
-                    :key="task.id"
-                    class="bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 hover:shadow-xl transition border-l-4"
-                    :class="{
-                    'border-red-500': isOverdue(task),
-                    'border-green-500': task.status === 'done',
-                    'border-blue-500': task.status === 'in-progress',
-                    'border-gray-300': task.status === 'todo'
-                  }"
-                >
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <h3 class="text-xl font-semibold text-gray-900">{{ task.title }}</h3>
-                      <p v-if="task.description" class="text-gray-600 mt-1">{{ task.description }}</p>
-
-                      <div class="flex flex-wrap items-center gap-3 mt-4">
-                        <!-- Priority -->
-                        <span :class="['px-3 py-1 rounded-full text-xs font-semibold', getPriorityColor(task.priority)]">
-                          {{ task.priority.charAt(0).toUpperCase() + task.priority.slice(1) }}
-                        </span>
-
-                        <!-- Status -->
-                        <select :value="task.status" @change="updateTaskStatus(task.id, $event.target.value)" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium">
-                          <option value="todo">To Do</option>
-                          <option value="in-progress">In Progress</option>
-                          <option value="done">Done</option>
-                        </select>
-
-                        <!-- Due Date -->
-                        <span v-if="task.dueDate" :class="['text-sm font-medium flex items-center gap-1', isOverdue(task) ? 'text-red-600' : 'text-gray-600']">
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {{ formatDate(task.dueDate) }}
-                        </span>
-
-                        <!-- Assignees -->
-                        <div v-if="task.assigneeIds?.length" class="flex -space-x-2">
-                          <div v-for="id in task.assigneeIds.slice(0, 3)" :key="id" class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs flex items-center justify-center border-2 border-white font-bold">
-                            {{ id[0].toUpperCase() }}
-                          </div>
-                          <div v-if="task.assigneeIds.length > 3" class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-xs flex items-center justify-center border-2 border-white font-bold">
-                            +{{ task.assigneeIds.length - 3 }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                      <button @click="editTask(task)" class="p-3 hover:bg-blue-50 rounded-xl text-blue-600 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                      <button @click="deleteTask(task.id)" class="p-3 hover:bg-red-50 rounded-xl text-red-600 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <KanbanBoard
-                v-if="currentView === 'board'"
-                :show-new-task-modal="showNewTaskModal"
-                :new-task-form="newTaskForm"
-                @edit-task="editTask"
-            />
-          </div>
-        </div>
-
-        <!-- DOCS VIEW -->
-        <div v-if="activeView === 'docs'" class="flex gap-6 h-[calc(100vh-140px)]">
-          <div class="w-80 bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Documents</h3>
-              <button @click="showNewDocModal = true" class="text-purple-600 hover:text-purple-700">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
+        <!-- Search bar -->
+        <Transition name="slide-down">
+          <div v-if="showSearch" class="px-4 sm:px-5 lg:px-6 pb-2.5">
+            <div class="flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2 max-w-sm">
+              <svg class="w-4 h-4 text-neutral-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input v-model="taskStore.searchQuery" ref="searchInput" type="text" placeholder="Search tasks..." class="bg-transparent outline-none flex-1 text-[12px] placeholder:text-neutral-400" />
+              <button @click="showSearch = false; taskStore.searchQuery = ''" class="text-neutral-400 hover:text-neutral-600 transition-colors p-0.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <DocsSidebar @select-doc="openDoc" @create-root="createNewRootDoc" @create-child="createNewChildDoc" />
           </div>
+        </Transition>
+      </header>
 
-          <div class="flex-1 bg-white rounded-2xl shadow-lg overflow-hidden">
-            <DocEditor
-                v-if="currentDoc && currentDoc.id"
-                :doc-id="currentDoc.id"
-                :title="currentDoc.title || 'Untitled'"
-                :content="currentDoc.content || ''"
-                @save="saveDoc"
-            />
-            <div v-else class="h-full flex items-center justify-center text-gray-500">
-              <div class="text-center">
-                <svg class="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p class="text-xl">Select a document or create a new one</p>
+      <!-- Content -->
+      <div class="px-4 sm:px-5 lg:px-6 py-4 max-w-[1280px]">
+        <!-- No Project Selected -->
+        <div v-if="!projectStore.selectedProject" class="flex items-center justify-center" style="min-height: calc(100vh - 160px)">
+          <div class="text-center max-w-xs">
+            <div class="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <svg class="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2" />
+              </svg>
+            </div>
+            <h2 class="text-[14px] font-bold text-neutral-900 mb-1">Select or create a project</h2>
+            <p class="text-[12px] text-neutral-500 mb-4 leading-relaxed">Projects organize your tasks, docs, and team.</p>
+            <button v-if="canManageProjects" @click="showNewProjectModal = true" class="btn-primary">
+              Create Project
+            </button>
+          </div>
+        </div>
+
+        <!-- Project Selected -->
+        <div v-else>
+          <!-- View tabs -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex gap-0.5 bg-neutral-100/80 p-0.5 rounded-md">
+              <button
+                  v-for="tab in viewTabs"
+                  :key="tab.value"
+                  @click="activeView = tab.value"
+                  :class="activeView === tab.value
+                    ? 'bg-white shadow-sm text-neutral-900'
+                    : 'text-neutral-500 hover:text-neutral-700'"
+                  class="px-2.5 py-1 rounded text-[11px] font-medium transition-all duration-150"
+              >{{ tab.label }}</button>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-[11px] text-neutral-400 tabular-nums">{{ allProjectTasks.length }} task{{ allProjectTasks.length !== 1 ? 's' : '' }}</span>
+              <div v-if="allProjectTasks.length > 0" class="flex items-center gap-1.5">
+                <div class="w-20 h-1 bg-neutral-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-neutral-900 rounded-full transition-all duration-500" :style="{ width: completionPercent + '%' }"></div>
+                </div>
+                <span class="text-[11px] font-semibold text-neutral-900 tabular-nums">{{ completionPercent }}%</span>
               </div>
             </div>
           </div>
+
+          <!-- OVERVIEW -->
+          <ProjectOverview
+              v-if="activeView === 'overview'"
+              :project="projectStore.selectedProject"
+              :tasks="allProjectTasks"
+              :members="memberStore.membersList"
+              @edit-project="showEditProjectModal = true"
+              @new-task="showNewTaskModal = true"
+              @view-task="openTaskDetail"
+          />
+
+          <!-- TASKS -->
+          <div v-if="activeView === 'tasks'">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex gap-0.5 bg-neutral-100/80 p-0.5 rounded-md">
+                <button @click="taskViewMode = 'list'" :class="taskViewMode === 'list' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500'" class="px-2.5 py-1 rounded text-[11px] font-medium transition-all">List</button>
+                <button @click="taskViewMode = 'board'" :class="taskViewMode === 'board' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500'" class="px-2.5 py-1 rounded text-[11px] font-medium transition-all">Board</button>
+              </div>
+              <span class="text-[11px] text-neutral-400 tabular-nums">{{ filteredProjectTasks.length }} of {{ allProjectTasks.length }}</span>
+            </div>
+
+            <TaskListView
+                v-if="taskViewMode === 'list'"
+                :tasks="filteredProjectTasks"
+                @edit="openTaskDetail"
+                @delete="deleteTask"
+                @update-status="updateTaskStatus"
+            />
+            <KanbanBoard
+                v-if="taskViewMode === 'board'"
+                @edit-task="openTaskDetail"
+                @quick-add="showNewTaskModal = true"
+            />
+          </div>
+
+          <!-- DOCS -->
+          <div v-if="activeView === 'docs'" class="flex flex-col lg:flex-row gap-3" style="min-height: calc(100vh - 160px)">
+            <div class="w-full lg:w-48 card p-2.5 flex-shrink-0">
+              <div class="flex items-center justify-between mb-2 px-1">
+                <span class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest">Documents</span>
+                <button v-if="canManageDocs" @click="showNewDocModal = true" class="text-neutral-400 hover:text-neutral-700 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                </button>
+              </div>
+              <DocsSidebar @select-doc="openDoc" @create-root="createNewRootDoc" @create-child="createNewChildDoc" />
+            </div>
+            <div class="flex-1 card overflow-hidden">
+              <DocEditor
+                  v-if="currentDoc && currentDoc.id"
+                  :doc-id="currentDoc.id"
+                  :title="currentDoc.title || 'Untitled'"
+                  :content="currentDoc.content || ''"
+                  @save="saveDoc"
+              />
+              <div v-else class="h-full flex items-center justify-center text-neutral-300 min-h-[300px]">
+                <div class="text-center">
+                  <svg class="w-8 h-8 mx-auto mb-2 text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  <p class="text-[11px] text-neutral-400">Select or create a document</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MEMBERS -->
+          <MembersView
+              v-if="activeView === 'members'"
+              :members="memberStore.membersList"
+              :pending-invites="pendingInvites"
+              :can-manage-members="canManageMembers"
+              @invite="showInviteModal = true"
+              @update-role="updateMemberRole"
+              @remove-member="removeMember"
+              @cancel-invite="cancelInvite"
+          />
+
+          <!-- ACTIVITY -->
+          <ActivityFeed
+              v-if="activeView === 'activity'"
+              :activities="activityStore.activities"
+          />
         </div>
-      </main>
+      </div>
     </div>
 
+    <!-- Task Detail Panel -->
+    <TaskDetailPanel
+      v-model="showTaskDetail"
+      :task="selectedTask"
+      :members="memberStore.membersList"
+      @update-task="handleTaskDetailUpdate"
+      @delete-task="deleteTask"
+    />
+
+    <!-- Settings Panel -->
+    <SettingsPanel
+      v-model="showSettings"
+      :workspace="workspaceStore.currentWorkspace"
+      :user-role="currentUserRole || 'member'"
+      @update-workspace="updateWorkspace"
+    />
+
     <!-- Modals -->
-    <Modal v-model="showNewProjectModal" title="Create New Project">
-      <div class="space-y-4">
+    <ProjectCreateModal v-model="showNewProjectModal" :loading="loading" @create="createProject" />
+
+    <Modal v-model="showEditProjectModal" title="Edit Project">
+      <div v-if="projectStore.selectedProject" class="space-y-3.5">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Project Name</label>
-          <input
-              v-model="newProjectForm.name"
-              placeholder="Enter project name..."
-              class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-              @keyup.enter="createProject"
-          />
+          <label class="block text-[11px] font-semibold text-neutral-500 mb-1 uppercase tracking-wide">Project Name</label>
+          <input v-model="editProjectForm.name" class="input-field" />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
-          <input
-              v-model="newProjectForm.color"
-              type="color"
-              class="w-full h-12 px-2 border rounded-xl cursor-pointer"
-          />
+          <label class="block text-[11px] font-semibold text-neutral-500 mb-1 uppercase tracking-wide">Description</label>
+          <textarea v-model="editProjectForm.description" rows="2" class="input-field resize-none" placeholder="What is this project about?"></textarea>
         </div>
-        <div class="flex gap-3">
-          <button
-              @click="createProject"
-              :disabled="loading"
-              class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition disabled:opacity-50"
-          >
-            {{ loading ? 'Creating...' : 'Create Project' }}
-          </button>
-          <button
-              @click="showNewProjectModal = false"
-              class="flex-1 bg-gray-200 py-3 rounded-xl font-medium"
-          >
-            Cancel
-          </button>
+        <div>
+          <label class="block text-[11px] font-semibold text-neutral-500 mb-1 uppercase tracking-wide">Color</label>
+          <div class="flex items-center gap-2.5">
+            <input v-model="editProjectForm.color" type="color" class="w-8 h-8 rounded-md border border-neutral-200 cursor-pointer p-0.5" />
+            <div class="flex gap-1.5 flex-wrap">
+              <button v-for="c in presetColors" :key="c" @click="editProjectForm.color = c" class="w-6 h-6 rounded-full border-2 transition-all hover:scale-110" :class="editProjectForm.color === c ? 'border-neutral-900 scale-110' : 'border-transparent'" :style="{ backgroundColor: c }"></button>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button @click="updateProject" :disabled="loading" class="flex-1 btn-primary disabled:opacity-50">Save Changes</button>
+          <button @click="showEditProjectModal = false" class="flex-1 btn-secondary">Cancel</button>
         </div>
       </div>
     </Modal>
 
-    <Modal v-model="showNewTaskModal" title="Create New Task">
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
-          <input
-              v-model="newTaskForm.title"
-              placeholder="Enter task title..."
-              class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-              @keyup.enter="createTask"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-          <textarea
-              v-model="newTaskForm.description"
-              placeholder="Task description..."
-              rows="3"
-              class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-          ></textarea>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-            <select v-model="newTaskForm.priority" class="w-full px-4 py-3 border rounded-xl">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
-            <input
-                v-model="newTaskForm.dueDate"
-                type="date"
-                class="w-full px-4 py-3 border rounded-xl"
-            />
-          </div>
-        </div>
-        <div class="flex gap-3">
-          <button
-              @click="createTask"
-              :disabled="loading"
-              class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition disabled:opacity-50"
-          >
-            {{ loading ? 'Creating...' : 'Create Task' }}
-          </button>
-          <button
-              @click="showNewTaskModal = false"
-              class="flex-1 bg-gray-200 py-3 rounded-xl font-medium"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal v-model="showEditTaskModal" title="Edit Task">
-      <div v-if="editingTask" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
-          <input
-              v-model="editingTask.title"
-              placeholder="Enter task title..."
-              class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-          <textarea
-              v-model="editingTask.description"
-              placeholder="Task description..."
-              rows="3"
-              class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-          ></textarea>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-            <select v-model="editingTask.priority" class="w-full px-4 py-3 border rounded-xl">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
-            <input
-                v-model="editingTask.dueDate"
-                type="date"
-                class="w-full px-4 py-3 border rounded-xl"
-            />
-          </div>
-        </div>
-        <div class="flex gap-3">
-          <button
-              @click="updateTask"
-              :disabled="loading"
-              class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition disabled:opacity-50"
-          >
-            {{ loading ? 'Updating...' : 'Update Task' }}
-          </button>
-          <button
-              @click="showEditTaskModal = false"
-              class="flex-1 bg-gray-200 py-3 rounded-xl font-medium"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <TaskCreateModal v-model="showNewTaskModal" :loading="loading" :members="memberStore.membersList" @create="createTask" />
 
     <Modal v-model="showNewDocModal" title="New Document">
-      <div class="space-y-4">
-        <input
-            v-model="newDocTitle"
-            placeholder="Document title..."
-            class="w-full px-4 py-3 border rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-black"
-            @keyup.enter="createNewRootDocFromModal"
-        />
-        <button
-            @click="createNewRootDocFromModal"
-            class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition shadow-lg"
-        >
-          Create Document
-        </button>
-      </div>
-    </Modal>
-
-    <Modal v-model="showInviteModal" title="Invite Teammate">
-      <div class="space-y-4">
-        <input
-            v-model="inviteEmail"
-            type="email"
-            placeholder="teammate@example.com"
-            class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500"
-            @keyup.enter="sendInvite"
-        />
-        <div class="flex gap-3">
-          <button @click="sendInvite"
-                  class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold">
-            Send Invite
-          </button>
-          <button @click="showInviteModal = false" class="flex-1 bg-gray-200 py-3 rounded-xl">Cancel</button>
+      <div class="space-y-3.5">
+        <div>
+          <label class="block text-[11px] font-semibold text-neutral-500 mb-1 uppercase tracking-wide">Document Title</label>
+          <input v-model="newDocTitle" placeholder="Enter a title..." class="input-field" @keyup.enter="createNewRootDocFromModal" />
         </div>
+        <button @click="createNewRootDocFromModal" :disabled="!newDocTitle.trim()" class="w-full btn-primary disabled:opacity-50">Create Document</button>
       </div>
     </Modal>
 
-    <!-- Toast Messages -->
-    <Transition name="fade">
-      <div v-if="successMessage" class="fixed bottom-6 right-6 bg-green-600 text-white px-6 py-4 rounded-xl shadow-2xl font-medium z-50">
-        {{ successMessage }}
-      </div>
-    </Transition>
-    <Transition name="fade">
-      <div v-if="errorMessage" class="fixed bottom-6 right-6 bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl font-medium z-50">
-        {{ errorMessage }}
-      </div>
-    </Transition>
+    <MemberInviteModal
+      v-model="showInviteModal"
+      :pending-invites="pendingInvites"
+      @invite="sendInvites"
+      @cancel-invite="cancelInvite"
+    />
+
+    <ToastNotification :success-message="successMessage" :error-message="errorMessage" />
   </div>
 </template>
 
@@ -530,18 +272,27 @@ import { useProjectStore } from '@/stores/useProjectStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useMemberStore } from '@/stores/useMemberStore'
 import { useDocStore } from '@/stores/useDocStore'
-import AppSidebar from '@/components/layout/AppSidebar.vue'
-import Modal from '@/components/ui/Modal.vue'
-import KanbanBoard from '~/components/task/KanbanBoard.vue'
-import DocEditor from '~/components/docs/DocEditor.vue'
-import DocsSidebar from '@/components/docs/DocsSidebar.vue'
+import { useActivityStore } from '@/stores/useActivityStore'
 import { useFirebase } from '@/composables/firebase-client'
+import type { Doc, Task } from '@/types'
 
+import DashboardSidebar from '@/components/layout/DashboardSidebar.vue'
+import TaskListView from '@/components/dashboard/TaskListView.vue'
+import KanbanBoard from '@/components/task/KanbanBoard.vue'
+import TaskDetailPanel from '@/components/task/TaskDetailPanel.vue'
+import ProjectOverview from '@/components/project/ProjectOverview.vue'
+import MembersView from '@/components/member/MembersView.vue'
+import ActivityFeed from '@/components/activity/ActivityFeed.vue'
+import SettingsPanel from '@/components/settings/SettingsPanel.vue'
+import DocEditor from '@/components/docs/DocEditor.vue'
+import DocsSidebar from '@/components/docs/DocsSidebar.vue'
+import Modal from '@/components/ui/Modal.vue'
+import ProjectCreateModal from '@/components/project/ProjectCreateModal.vue'
+import TaskCreateModal from '@/components/task/TaskCreateModal.vue'
+import MemberInviteModal from '@/components/member/MemberInviteModal.vue'
+import ToastNotification from '@/components/common/ToastNotification.vue'
 
-
-definePageMeta({
-  middleware: 'auth'
-})
+definePageMeta({ layout: 'dashboard', middleware: 'auth', ssr: false })
 
 const { auth } = useFirebase()
 const router = useRouter()
@@ -550,93 +301,138 @@ const projectStore = useProjectStore()
 const taskStore = useTaskStore()
 const memberStore = useMemberStore()
 const docStore = useDocStore()
+const activityStore = useActivityStore()
 
+// UI State
+const sidebarCollapsed = ref(false)
+const mobileSidebarOpen = ref(false)
 const showNewProjectModal = ref(false)
+const showEditProjectModal = ref(false)
 const showNewTaskModal = ref(false)
-const showEditTaskModal = ref(false)
-const editingTask = ref(null)
+const showNewDocModal = ref(false)
+const showInviteModal = ref(false)
+const showTaskDetail = ref(false)
+const showSettings = ref(false)
+const showSearch = ref(false)
+const selectedTask = ref<any>(null)
 const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
+const activeView = ref<string>('overview')
+const taskViewMode = ref<string>('list')
+const newDocTitle = ref('')
+const currentDoc = ref<Doc | null>(null)
+const searchInput = ref<HTMLInputElement | null>(null)
+const pendingInvites = ref<any[]>([])
 
-const newProjectForm = ref({
-  name: '',
-  color: '#8B5CF6'
-})
+const presetColors = ['#171717', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4']
+const editProjectForm = ref({ name: '', description: '', color: '#171717' })
 
-const newTaskForm = ref({
-  title: '',
-  description: '',
-  priority: 'medium',
-  dueDate: ''
-})
+const viewTabs = [
+  { value: 'overview', label: 'Overview' },
+  { value: 'tasks', label: 'Tasks' },
+  { value: 'docs', label: 'Docs' },
+  { value: 'members', label: 'Team' },
+  { value: 'activity', label: 'Activity' }
+]
 
 const user = computed(() => auth.currentUser)
+const userInitials = computed(() => user.value?.email?.[0].toUpperCase() || 'U')
+const currentUserRole = computed(() => memberStore.currentUserRole())
+
+// Permissions
+const canManageMembers = computed(() => memberStore.hasPermission('manage_members'))
+const canManageProjects = computed(() => memberStore.hasPermission('manage_projects'))
+const canManageTasks = computed(() => memberStore.hasPermission('manage_tasks'))
+const canManageDocs = computed(() => memberStore.hasPermission('manage_docs'))
+
+const allProjectTasks = computed(() => {
+  if (!projectStore.selectedProject) return []
+  return taskStore.tasks.filter(t => t.projectId === projectStore.selectedProject!.id)
+})
 
 const filteredProjectTasks = computed(() => {
   if (!projectStore.selectedProject) return []
-  return taskStore.filteredTasks.filter(t => t.projectId === projectStore.selectedProject.id)
+  return taskStore.filteredTasks.filter(t => t.projectId === projectStore.selectedProject!.id)
 })
 
-const getProjectTaskCount = computed(() => {
-  if (!projectStore.selectedProject) return 0
-  return taskStore.tasks.filter(t => t.projectId === projectStore.selectedProject.id).length
+const completionPercent = computed(() => {
+  if (allProjectTasks.value.length === 0) return 0
+  return Math.round((allProjectTasks.value.filter(t => t.status === 'done').length / allProjectTasks.value.length) * 100)
 })
 
-const activeView = ref<'tasks' | 'docs'>('tasks')
-const currentView = ref<'list' | 'board' | 'calendar'>('list')
-const showNewDocModal = ref(false)
-const newDocTitle = ref('')
-
-const userInitials = computed(() => {
-  return user.value?.email?.[0].toUpperCase() || 'U'
-})
-
-const currentDoc = ref<Doc | null>(null)
-
-const saveCurrentDoc = async (data: any) => {
-  if (currentDoc.value) {
-    currentDoc.value = { ...currentDoc.value, ...data }
-    showSuccess('Document saved!')
-  }
+const loadPendingInvites = async () => {
+  if (!workspaceStore.currentWorkspace) return
+  try {
+    pendingInvites.value = await memberStore.getPendingInvites(workspaceStore.currentWorkspace.id)
+  } catch { pendingInvites.value = [] }
 }
 
-// Watch for workspace changes to listen to docs and team
+// Watchers
 watch(() => workspaceStore.currentWorkspace, (ws) => {
   if (ws) {
     docStore.listen(ws.id)
     memberStore.listen(ws.id)
+    activityStore.listen(ws.id)
+    loadPendingInvites()
   }
 }, { immediate: true })
 
+watch(showEditProjectModal, (val) => {
+  if (val && projectStore.selectedProject) {
+    editProjectForm.value = {
+      name: projectStore.selectedProject.name,
+      description: (projectStore.selectedProject as any).description || '',
+      color: projectStore.selectedProject.color
+    }
+  }
+})
+
+watch(showSearch, (val) => {
+  if (val) nextTick(() => searchInput.value?.focus())
+})
+
+// Navigation
+const selectProject = (project: any) => {
+  projectStore.selectedProject = project
+  activeView.value = 'overview'
+  mobileSidebarOpen.value = false
+}
+
+// Task actions
+const openTaskDetail = (task: Task) => {
+  selectedTask.value = { ...task }
+  showTaskDetail.value = true
+}
+
+const handleTaskDetailUpdate = async (data: any) => {
+  if (!data?.id) return
+  try {
+    const { id, ...updates } = data
+    await taskStore.update(id, updates)
+  } catch { showError('Failed to update task') }
+}
+
+// Doc actions
 const openDoc = (doc: Doc) => {
   currentDoc.value = doc
   activeView.value = 'docs'
 }
 
 const saveDoc = async (data: { title: string; content: string }) => {
-  if (!currentDoc.value?.id) {
-    showError('No document selected')
-    return
-  }
-
+  if (!currentDoc.value?.id) return showError('No document selected')
   try {
     await docStore.update(currentDoc.value.id, data)
-    showSuccess('Document saved!')
-  } catch (err) {
-    showError('Failed to save document')
-  }
+    showSuccess('Saved')
+  } catch { showError('Failed to save document') }
 }
 
 const createNewRootDoc = async () => {
-  if (!workspaceStore.currentWorkspace || !user.value) {
-    showError('Missing workspace or user')
-    return
-  }
-
+  if (!workspaceStore.currentWorkspace || !user.value) return
   try {
     const id = await docStore.create({
       workspaceId: workspaceStore.currentWorkspace.id,
+      projectId: projectStore.selectedProject?.id || null,
       title: 'New Document',
       content: '<h1>New Document</h1><p>Start writing...</p>',
       order: docStore.docs.length,
@@ -644,104 +440,118 @@ const createNewRootDoc = async () => {
     })
     const newDoc = docStore.docs.find(d => d.id === id)
     if (newDoc) openDoc(newDoc)
-  } catch (err) {
-    showError('Failed to create document')
-  }
+    logActivity('doc_created', 'New Document')
+  } catch { showError('Failed to create document') }
 }
 
 const createNewChildDoc = async (parentId: string) => {
-  if (!workspaceStore.currentWorkspace || !user.value) {
-    showError('Missing workspace or user')
-    return
-  }
-
+  if (!workspaceStore.currentWorkspace || !user.value) return
   try {
     const id = await docStore.create({
       workspaceId: workspaceStore.currentWorkspace.id,
+      projectId: projectStore.selectedProject?.id || null,
       parentId,
       title: 'New Page',
-      content: '<p>Start writing your page...</p>',
+      content: '<p>Start writing...</p>',
       order: 0,
       createdBy: user.value.uid,
       isFolder: false
     })
-
     const newDoc = docStore.docs.find(d => d.id === id)
     if (newDoc) openDoc(newDoc)
-  } catch (err) {
-    showError('Failed to create child document')
-  }
+  } catch { showError('Failed to create page') }
 }
 
 const createNewRootDocFromModal = async () => {
-  if (!newDocTitle.value.trim()) {
-    showError('Please enter a document title')
-    return
-  }
-
-  if (!workspaceStore.currentWorkspace || !user.value) {
-    showError('No workspace selected')
-    return
-  }
-
+  if (!newDocTitle.value.trim() || !workspaceStore.currentWorkspace || !user.value) return
   try {
+    const title = newDocTitle.value.trim()
     const id = await docStore.create({
       workspaceId: workspaceStore.currentWorkspace.id,
-      title: newDocTitle.value.trim(),
-      content: `<h1>${newDocTitle.value.trim()}</h1><p>Start writing...</p>`,
+      projectId: projectStore.selectedProject?.id || null,
+      title,
+      content: `<h1>${title}</h1><p>Start writing...</p>`,
       order: docStore.docs.length,
       createdBy: user.value.uid,
       isFolder: false
     })
-
     const newDoc = docStore.docs.find(d => d.id === id)
-    if (newDoc) {
-      openDoc(newDoc)
-      showSuccess('Document created!')
-      newDocTitle.value = ''
-      showNewDocModal.value = false
-    }
-  } catch (err) {
-    showError('Failed to create document')
-  }
+    if (newDoc) { openDoc(newDoc); newDocTitle.value = ''; showNewDocModal.value = false }
+    logActivity('doc_created', title)
+  } catch { showError('Failed to create document') }
 }
 
-// Team invitation functions
-const showInviteModal = ref(false)
-const inviteEmail = ref('')
-const sendInvite = async () => {
-  const email = inviteEmail.value.trim()
-
-  // Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!email) return showError('Please enter an email address')
-  if (!emailRegex.test(email)) return showError('Please enter a valid email address')
-
+// Member actions
+const sendInvites = async (invites: { email: string; role: string }[]) => {
   if (!workspaceStore.currentWorkspace) return showError('No workspace selected')
-
-  try {
-    await memberStore.inviteMember(email, workspaceStore.currentWorkspace.id)
-    showSuccess('Team member invited successfully!')
-    inviteEmail.value = ''
-    showInviteModal.value = false
-  } catch (err: any) {
-    showError(err.message || 'Failed to invite member')
-    console.error('Invite error:', err)
+  let successCount = 0
+  let pendingCount = 0
+  for (const inv of invites) {
+    try {
+      const result = await memberStore.inviteMember(
+        inv.email,
+        workspaceStore.currentWorkspace.id,
+        inv.role as any,
+        workspaceStore.currentWorkspace.name || 'Workspace'
+      )
+      if (result.pending) pendingCount++
+      else successCount++
+      logActivity('member_invited', inv.email)
+    } catch (err: any) {
+      showError(err.message || `Failed to invite ${inv.email}`)
+    }
   }
+  if (successCount > 0) showSuccess(`${successCount} member${successCount > 1 ? 's' : ''} added!`)
+  else if (pendingCount > 0) showSuccess(`${pendingCount} invite${pendingCount > 1 ? 's' : ''} sent! They'll join when they register.`)
+  showInviteModal.value = false
+  loadPendingInvites()
 }
+
+const cancelInvite = async (inviteId: string) => {
+  try {
+    await memberStore.cancelInvite(inviteId)
+    showSuccess('Invite cancelled')
+    loadPendingInvites()
+  } catch { showError('Failed to cancel invite') }
+}
+
+const updateMemberRole = async (userId: string, newRole: string) => {
+  if (!workspaceStore.currentWorkspace) return
+  try {
+    await memberStore.updateMemberRole(workspaceStore.currentWorkspace.id, userId, newRole as any)
+    showSuccess('Role updated')
+  } catch { showError('Failed to update role') }
+}
+
+const removeMember = async (userId: string) => {
+  if (!workspaceStore.currentWorkspace) return
+  if (!confirm('Remove this member from the workspace?')) return
+  try {
+    await memberStore.removeMember(workspaceStore.currentWorkspace.id, userId)
+    showSuccess('Member removed')
+  } catch { showError('Failed to remove member') }
+}
+
+// Workspace
+const updateWorkspace = async (updates: any) => {
+  if (!workspaceStore.currentWorkspace) return
+  try {
+    await workspaceStore.update(workspaceStore.currentWorkspace.id, updates)
+    showSuccess('Workspace updated')
+  } catch { showError('Failed to update workspace') }
+}
+
+// Lifecycle
 onMounted(async () => {
-  if (!user.value) {
-    router.push('/login')
-    return
-  }
+  if (!user.value) return router.push('/login')
   workspaceStore.listen(user.value.uid)
-  watch(() => workspaceStore.loading, async (loading) => {
-    if (!loading && workspaceStore.workspaces.length === 0) {
-      await workspaceStore.create('My Workspace', user.value.uid)
+
+  watch(() => workspaceStore.loading, async (isLoading) => {
+    if (!isLoading && workspaceStore.workspaces.length === 0) {
+      await workspaceStore.create('My Workspace', user.value!.uid)
     }
   }, { immediate: true })
 
-  // Listen to projects and tasks when workspace changes
   watch(() => workspaceStore.currentWorkspace, (workspace) => {
     if (workspace) {
       projectStore.listen(workspace.id)
@@ -750,175 +560,112 @@ onMounted(async () => {
   }, { immediate: true })
 })
 
-const onWorkspaceChange = () => {
-  if (workspaceStore.currentWorkspace) {
-    projectStore.listen(workspaceStore.currentWorkspace.id)
-    taskStore.listen(workspaceStore.currentWorkspace.id)
+const onWorkspaceChange = (event: any) => {
+  const wsId = event?.target?.value || event
+  const ws = workspaceStore.workspaces.find(w => w.id === wsId)
+  if (ws) {
+    workspaceStore.currentWorkspace = ws
+    projectStore.listen(ws.id)
+    taskStore.listen(ws.id)
   }
 }
 
-const createProject = async () => {
-  if (!newProjectForm.value.name.trim() || !workspaceStore.currentWorkspace) {
-    showError('Project name is required')
-    return
-  }
-
+// Project CRUD
+const createProject = async (form: any) => {
+  if (!workspaceStore.currentWorkspace) return showError('No workspace selected')
   loading.value = true
   try {
-    await projectStore.create({
-      name: newProjectForm.value.name,
-      color: newProjectForm.value.color,
-      workspaceId: workspaceStore.currentWorkspace.id
-    })
-
-    showSuccess('Project created successfully!')
-    newProjectForm.value = { name: '', color: '#8B5CF6' }
+    await projectStore.create({ name: form.name, color: form.color, description: form.description || '', workspaceId: workspaceStore.currentWorkspace.id })
+    showSuccess('Project created!')
     showNewProjectModal.value = false
-  } catch (err) {
-    showError('Failed to create project')
-  } finally {
-    loading.value = false
-  }
+    logActivity('project_created', form.name)
+  } catch { showError('Failed to create project') }
+  finally { loading.value = false }
 }
 
-const createTask = async () => {
-  if (!newTaskForm.value.title.trim() || !projectStore.selectedProject || !workspaceStore.currentWorkspace) {
-    showError('Task title is required')
-    return
-  }
+const updateProject = async () => {
+  if (!projectStore.selectedProject) return
+  loading.value = true
+  try {
+    await projectStore.update(projectStore.selectedProject.id, editProjectForm.value)
+    showSuccess('Project updated')
+    showEditProjectModal.value = false
+  } catch { showError('Failed to update project') }
+  finally { loading.value = false }
+}
 
+// Task CRUD
+const createTask = async (form: any) => {
+  if (!projectStore.selectedProject || !workspaceStore.currentWorkspace) return showError('Select a project first')
   loading.value = true
   try {
     await taskStore.create({
-      title: newTaskForm.value.title,
-      description: newTaskForm.value.description,
-      priority: newTaskForm.value.priority,
-      status: 'todo',
-      dueDate: newTaskForm.value.dueDate || null,
-      projectId: projectStore.selectedProject.id,
-      workspaceId: workspaceStore.currentWorkspace.id
+      title: form.title, description: form.description, priority: form.priority as any,
+      status: (form.status || 'todo') as any, dueDate: form.dueDate || null,
+      estimatedHours: form.estimatedHours || undefined, assigneeIds: form.assigneeIds || [],
+      projectId: projectStore.selectedProject.id, workspaceId: workspaceStore.currentWorkspace.id,
+      createdBy: user.value?.uid || ''
     })
-
-    showSuccess('Task created successfully!')
-    newTaskForm.value = { title: '', description: '', priority: 'medium', dueDate: '' }
+    showSuccess('Task created!')
     showNewTaskModal.value = false
-  } catch (err) {
-    showError('Failed to create task')
-  } finally {
-    loading.value = false
-  }
-}
-
-const updateTask = async () => {
-  if (!editingTask.value) return
-
-  loading.value = true
-  try {
-    await taskStore.update(editingTask.value.id, {
-      title: editingTask.value.title,
-      description: editingTask.value.description,
-      priority: editingTask.value.priority,
-      dueDate: editingTask.value.dueDate || null
-    })
-
-    showSuccess('Task updated successfully!')
-    editingTask.value = null
-    showEditTaskModal.value = false
-  } catch (err) {
-    showError('Failed to update task')
-  } finally {
-    loading.value = false
-  }
+    logActivity('task_created', form.title)
+  } catch { showError('Failed to create task') }
+  finally { loading.value = false }
 }
 
 const updateTaskStatus = async (taskId: string, newStatus: string) => {
   try {
-    await taskStore.update(taskId, { status: newStatus })
-  } catch (err) {
-    showError('Failed to update task status')
-  }
+    await taskStore.update(taskId, { status: newStatus as any })
+    if (newStatus === 'done') logActivity('task_completed', '')
+  } catch { showError('Failed to update status') }
 }
 
 const deleteTask = async (taskId: string) => {
-  if (!confirm('Are you sure you want to delete this task?')) return
-
+  if (!confirm('Delete this task?')) return
   try {
     await taskStore.remove(taskId)
-    showSuccess('Task deleted successfully!')
-  } catch (err) {
-    showError('Failed to delete task')
-  }
+    showSuccess('Task deleted')
+    showTaskDetail.value = false
+  } catch { showError('Failed to delete task') }
 }
 
 const handleDeleteProject = async (projectId: string) => {
-  if (!confirm('Are you sure? All tasks will be deleted.')) return
-
+  if (!confirm('Delete this project and all its data?')) return
   try {
     await projectStore.remove(projectId)
-    showSuccess('Project deleted successfully!')
-  } catch (err) {
-    showError('Failed to delete project')
-  }
+    showSuccess('Project deleted')
+  } catch { showError('Failed to delete project') }
 }
 
-const editTask = (task: any) => {
-  editingTask.value = { ...task }
-  showEditTaskModal.value = true
-}
-
-const isOverdue = (task: any) => {
-  if (!task.dueDate || task.status === 'done') return false
-  return new Date(task.dueDate) < new Date()
-}
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'high': return 'text-red-600 bg-red-50'
-    case 'medium': return 'text-yellow-600 bg-yellow-50'
-    case 'low': return 'text-green-600 bg-green-50'
-    default: return 'text-gray-600 bg-gray-50'
-  }
-}
-
-const formatDate = (date: string) => {
-  if (!date) return ''
-  return new Date(date).toLocaleDateString()
+// Activity logging helper (fire-and-forget for speed)
+const logActivity = (action: string, targetTitle: string) => {
+  if (!workspaceStore.currentWorkspace || !user.value) return
+  activityStore.log({
+    workspaceId: workspaceStore.currentWorkspace.id,
+    projectId: projectStore.selectedProject?.id || '',
+    userId: user.value.uid,
+    userName: user.value.displayName || user.value.email?.split('@')[0] || 'Unknown',
+    userEmail: user.value.email || '',
+    action,
+    targetTitle
+  }).catch(() => { /* silent */ })
 }
 
 const logout = async () => {
   try {
-    // Clean up all listeners before signing out
-    workspaceStore.stopListening()
-    projectStore.stopListening()
-    taskStore.stopListening()
-    docStore.stopListening()
-    memberStore.stopListening()
-
+    workspaceStore.stopListening(); projectStore.stopListening(); taskStore.stopListening()
+    docStore.stopListening(); memberStore.stopListening(); activityStore.stopListening()
     const { signOut } = await import('firebase/auth')
     await signOut(auth)
     router.push('/login')
-  } catch (err) {
-    showError('Failed to logout')
-  }
+  } catch { showError('Failed to logout') }
 }
 
-const showSuccess = (msg: string) => {
-  successMessage.value = msg
-  setTimeout(() => (successMessage.value = ''), 3000)
-}
-
-const showError = (msg: string) => {
-  errorMessage.value = msg
-  setTimeout(() => (errorMessage.value = ''), 3000)
-}
+const showSuccess = (msg: string) => { successMessage.value = msg; setTimeout(() => (successMessage.value = ''), 3000) }
+const showError = (msg: string) => { errorMessage.value = msg; setTimeout(() => (errorMessage.value = ''), 3000) }
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
-}
+.slide-down-enter-active, .slide-down-leave-active { transition: all 0.2s ease; }
+.slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateY(-4px); }
 </style>

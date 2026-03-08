@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if user owns the resource
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    // Helper: Check if user is a workspace member
+    function isWorkspaceMember(workspaceId) {
+      return isAuth() && exists(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid));
+    }
+
+    // Helper: Check if workspace is public
+    function isPublicWorkspace(workspaceId) {
+      return get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.isPublic == true;
+    }
+
+    // Helper: Get member role in workspace
+    function getMemberRole(workspaceId) {
+      return get(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid)).data.role;
+    }
+
+    // Helper: Check if user has admin+ role
+    function isWorkspaceAdmin(workspaceId) {
+      return isWorkspaceMember(workspaceId) &&
+        getMemberRole(workspaceId) in ['owner', 'admin'];
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
+
+      // User's workspace memberships
+      match /workspaces/{workspaceId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId) || isWorkspaceAdmin(workspaceId);
+      }
+    }
+
+    // Workspaces collection
+    match /workspaces/{workspaceId} {
+      allow read: if isWorkspaceMember(workspaceId) ||
+                     resource.data.isPublic == true;
+      allow create: if isAuth();
+      allow update: if isWorkspaceAdmin(workspaceId);
+      allow delete: if isAuth() && resource.data.ownerId == request.auth.uid;
+
+      // Workspace members subcollection
+      match /members/{memberId} {
+        allow read: if isWorkspaceMember(workspaceId) ||
+                       isPublicWorkspace(workspaceId);
+        allow create: if isWorkspaceAdmin(workspaceId);
+        allow update: if isWorkspaceAdmin(workspaceId);
+        allow delete: if isWorkspaceAdmin(workspaceId) ||
+                        isOwner(memberId);
+      }
+    }
+
+    // Projects collection
+    match /projects/{projectId} {
+      allow read: if isWorkspaceMember(resource.data.workspaceId) ||
+                     isPublicWorkspace(resource.data.workspaceId);
+      allow create: if isAuth() &&
+                       isWorkspaceMember(request.resource.data.workspaceId);
+      allow update: if isWorkspaceMember(resource.data.workspaceId) &&
+                       getMemberRole(resource.data.workspaceId) in ['owner', 'admin', 'member'];
+      allow delete: if isWorkspaceAdmin(resource.data.workspaceId);
+    }
+
+    // Tasks collection
+    match /tasks/{taskId} {
+      allow read: if isWorkspaceMember(resource.data.workspaceId) ||
+                     isPublicWorkspace(resource.data.workspaceId);
+      allow create: if isAuth() &&
+                       isWorkspaceMember(request.resource.data.workspaceId) &&
+                       getMemberRole(request.resource.data.workspaceId) in ['owner', 'admin', 'member'];
+      allow update: if isWorkspaceMember(resource.data.workspaceId) &&
+                       getMemberRole(resource.data.workspaceId) in ['owner', 'admin', 'member'];
+      allow delete: if isWorkspaceMember(resource.data.workspaceId) &&
+                       getMemberRole(resource.data.workspaceId) in ['owner', 'admin', 'member'];
+    }
+
+    // Docs collection
+    match /docs/{docId} {
+      allow read: if isWorkspaceMember(resource.data.workspaceId) ||
+                     isPublicWorkspace(resource.data.workspaceId);
+      allow create: if isAuth() &&
+                       isWorkspaceMember(request.resource.data.workspaceId) &&
+                       getMemberRole(request.resource.data.workspaceId) in ['owner', 'admin', 'member'];
+      allow update: if isWorkspaceMember(resource.data.workspaceId) &&
+                       getMemberRole(resource.data.workspaceId) in ['owner', 'admin', 'member'];
+      allow delete: if isWorkspaceAdmin(resource.data.workspaceId);
+    }
+  }
+}

@@ -2,7 +2,8 @@
   "name": "ElevateYou",
   "short_name": "ElevateYou",
   "start_url": "/",
-  "theme_color": "#ffffff",
+  "description": "Open source project management platform",
+  "theme_color": "#7C3AED",
   "background_color": "#ffffff",
   "display": "standalone",
   "icons": [

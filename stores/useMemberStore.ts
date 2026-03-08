@@ -1,6 +1,6 @@
 // stores/useMemberStore.ts
 import { defineStore } from 'pinia'
-import { collection, doc, query, where, getDocs, getDoc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore'
+import { collection, doc, query, where, getDocs, getDoc, setDoc, deleteDoc, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
 import { useFirebase } from '~/composables/firebase-client'
 
 export type Role = 'owner' | 'admin' | 'member' | 'viewer'
@@ -16,11 +16,48 @@ export interface Member {
     lastSeen?: Date
 }
 
+export interface PendingInvite {
+    id: string
+    email: string
+    workspaceId: string
+    workspaceName: string
+    role: Role
+    invitedBy: string
+    invitedAt: Date
+    status: 'pending' | 'accepted' | 'cancelled'
+}
+
+// Permission definitions
+const PERMISSIONS: Record<Role, string[]> = {
+    owner: ['manage_workspace', 'manage_members', 'manage_projects', 'manage_tasks', 'manage_docs', 'view_all'],
+    admin: ['manage_members', 'manage_projects', 'manage_tasks', 'manage_docs', 'view_all'],
+    member: ['manage_tasks', 'manage_docs', 'view_all'],
+    viewer: ['view_all']
+}
+
 export const useMemberStore = defineStore('member', () => {
-    const { firestore } = useFirebase()
+    const { firestore, auth } = useFirebase()
     const members = ref<Map<string, Member>>(new Map())
     const loading = ref(false)
     let unsubscribe: (() => void) | null = null
+
+    // ── Permission helpers ──────────────────────────────────────
+
+    function hasPermission(permission: string): boolean {
+        const uid = auth.currentUser?.uid
+        if (!uid) return false
+        const member = members.value.get(uid)
+        if (!member) return false
+        return PERMISSIONS[member.role]?.includes(permission) ?? false
+    }
+
+    function currentUserRole(): Role | null {
+        const uid = auth.currentUser?.uid
+        if (!uid) return null
+        return members.value.get(uid)?.role ?? null
+    }
+
+    // ── Real-time listeners ─────────────────────────────────────
 
     /**
      * Listen to member updates (real-time)
@@ -46,14 +83,17 @@ export const useMemberStore = defineStore('member', () => {
             unsubscribe = onSnapshot(membersRef, async (snapshot) => {
                 const newMembers = new Map<string, Member>()
 
-                // Fetch user profiles for each member
-                for (const memberDoc of snapshot.docs) {
+                // Fetch all user profiles in parallel (fixes N+1 query)
+                const profilePromises = snapshot.docs.map(async (memberDoc) => {
                     const memberData = memberDoc.data()
-
-                    // Get user profile from users collection
                     const userRef = doc(firestore, 'users', memberDoc.id)
                     const userSnap = await getDoc(userRef)
+                    return { memberDoc, memberData, userSnap }
+                })
 
+                const results = await Promise.all(profilePromises)
+
+                for (const { memberDoc, memberData, userSnap } of results) {
                     if (userSnap.exists()) {
                         const userData = userSnap.data()
                         newMembers.set(memberDoc.id, {
@@ -67,7 +107,6 @@ export const useMemberStore = defineStore('member', () => {
                             lastSeen: memberData.lastSeen?.toDate()
                         })
                     } else {
-                        // Fallback if user profile doesn't exist
                         newMembers.set(memberDoc.id, {
                             uid: memberDoc.id,
                             email: memberData.email || 'unknown@example.com',
@@ -89,11 +128,19 @@ export const useMemberStore = defineStore('member', () => {
         }
     }
 
+    // ── Invite member (supports pending invites) ────────────────
+
     /**
      * Invite a member to workspace
-     * The user must already have an account
+     * If user exists → add them directly
+     * If user doesn't exist → create a pending invite in the `invites` collection
      */
-    async function inviteMember(email: string, workspaceId: string, role: Role = 'member') {
+    async function inviteMember(
+        email: string,
+        workspaceId: string,
+        role: Role = 'member',
+        workspaceName: string = ''
+    ): Promise<{ success: boolean; pending: boolean }> {
         try {
             const normalizedEmail = email.toLowerCase().trim()
 
@@ -102,55 +149,171 @@ export const useMemberStore = defineStore('member', () => {
             const q = query(usersRef, where('email', '==', normalizedEmail))
             const snapshot = await getDocs(q)
 
-            console.log('🔍 Searching for user with email:', normalizedEmail)
-            console.log('📊 Found users:', snapshot.size)
+            if (!snapshot.empty) {
+                // ── User exists → add them directly ──
+                const userDoc = snapshot.docs[0]
+                const userData = userDoc.data()
+                const userId = userDoc.id
 
-            if (snapshot.empty) {
-                // List all users for debugging
-                const allUsersSnap = await getDocs(collection(firestore, 'users'))
-                console.log('👥 All users in database:')
-                allUsersSnap.forEach(doc => {
-                    console.log(`  - ${doc.id}: ${doc.data().email}`)
+                // Check if already a member
+                const existingMember = members.value.get(userId)
+                if (existingMember) {
+                    throw new Error('User is already a member of this workspace')
+                }
+
+                // Add to workspace members
+                await setDoc(doc(firestore, 'workspaces', workspaceId, 'members', userId), {
+                    email: userData.email,
+                    displayName: userData.displayName || normalizedEmail.split('@')[0],
+                    photoURL: userData.photoURL || null,
+                    role,
+                    joinedAt: new Date(),
+                    isOnline: false
                 })
-                throw new Error(`User with email "${email}" not found. They need to create an account first.`)
+
+                // Add workspace to user's workspaces
+                await setDoc(doc(firestore, 'users', userId, 'workspaces', workspaceId), {
+                    role,
+                    joinedAt: new Date()
+                })
+
+                return { success: true, pending: false }
+            } else {
+                // ── User doesn't exist → store a pending invite ──
+
+                // Check if there is already a pending invite for this email + workspace
+                const invitesRef = collection(firestore, 'invites')
+                const existingInviteQuery = query(
+                    invitesRef,
+                    where('email', '==', normalizedEmail),
+                    where('workspaceId', '==', workspaceId),
+                    where('status', '==', 'pending')
+                )
+                const existingInvites = await getDocs(existingInviteQuery)
+                if (!existingInvites.empty) {
+                    throw new Error('A pending invite already exists for this email in this workspace')
+                }
+
+                const invitedByUid = auth.currentUser?.uid || 'unknown'
+
+                await addDoc(collection(firestore, 'invites'), {
+                    email: normalizedEmail,
+                    workspaceId,
+                    workspaceName,
+                    role,
+                    invitedBy: invitedByUid,
+                    invitedAt: serverTimestamp(),
+                    status: 'pending'
+                })
+
+                return { success: true, pending: true }
             }
-
-            const userDoc = snapshot.docs[0]
-            const userData = userDoc.data()
-            const userId = userDoc.id
-
-            console.log('✅ Found user:', userId, userData.email)
-
-            // Check if already a member
-            const existingMember = members.value.get(userId)
-            if (existingMember) {
-                throw new Error('User is already a member of this workspace')
-            }
-
-            // Add to workspace members
-            await setDoc(doc(firestore, 'workspaces', workspaceId, 'members', userId), {
-                email: userData.email,
-                displayName: userData.displayName || email.split('@')[0],
-                photoURL: userData.photoURL || null,
-                role,
-                joinedAt: new Date(),
-                isOnline: false
-            })
-
-            // Add workspace to user's workspaces
-            await setDoc(doc(firestore, 'users', userId, 'workspaces', workspaceId), {
-                role,
-                joinedAt: new Date()
-            })
-
-            console.log('🎉 Successfully invited user to workspace')
-
-            return { success: true, userId }
         } catch (error: any) {
-            console.error('❌ Error inviting member:', error)
+            console.error('Error inviting member:', error)
             throw error
         }
     }
+
+    // ── Pending invite management ───────────────────────────────
+
+    /**
+     * Get all pending invites for a workspace
+     */
+    async function getPendingInvites(workspaceId: string): Promise<PendingInvite[]> {
+        try {
+            const invitesRef = collection(firestore, 'invites')
+            const q = query(
+                invitesRef,
+                where('workspaceId', '==', workspaceId),
+                where('status', '==', 'pending')
+            )
+            const snapshot = await getDocs(q)
+
+            return snapshot.docs.map((d) => ({
+                id: d.id,
+                email: d.data().email,
+                workspaceId: d.data().workspaceId,
+                workspaceName: d.data().workspaceName,
+                role: d.data().role,
+                invitedBy: d.data().invitedBy,
+                invitedAt: d.data().invitedAt?.toDate() || new Date(),
+                status: d.data().status
+            }))
+        } catch (error) {
+            console.error('Error fetching pending invites:', error)
+            return []
+        }
+    }
+
+    /**
+     * Cancel (delete) a pending invite
+     */
+    async function cancelInvite(inviteId: string): Promise<{ success: boolean }> {
+        try {
+            await deleteDoc(doc(firestore, 'invites', inviteId))
+            return { success: true }
+        } catch (error) {
+            console.error('Error cancelling invite:', error)
+            throw error
+        }
+    }
+
+    /**
+     * Called after registration to check for pending invites and auto-join workspaces.
+     * Returns the number of workspaces the user was added to.
+     */
+    async function acceptInviteOnRegister(
+        userId: string,
+        email: string
+    ): Promise<{ joinedCount: number; workspaceNames: string[] }> {
+        const normalizedEmail = email.toLowerCase().trim()
+        const workspaceNames: string[] = []
+
+        try {
+            const invitesRef = collection(firestore, 'invites')
+            const q = query(
+                invitesRef,
+                where('email', '==', normalizedEmail),
+                where('status', '==', 'pending')
+            )
+            const snapshot = await getDocs(q)
+
+            for (const inviteDoc of snapshot.docs) {
+                const invite = inviteDoc.data()
+
+                // Add user to workspace members
+                await setDoc(doc(firestore, 'workspaces', invite.workspaceId, 'members', userId), {
+                    email: normalizedEmail,
+                    displayName: normalizedEmail.split('@')[0],
+                    photoURL: null,
+                    role: invite.role || 'member',
+                    joinedAt: new Date(),
+                    isOnline: false
+                })
+
+                // Add workspace to user's workspaces
+                await setDoc(doc(firestore, 'users', userId, 'workspaces', invite.workspaceId), {
+                    role: invite.role || 'member',
+                    joinedAt: new Date()
+                })
+
+                // Mark invite as accepted
+                await setDoc(doc(firestore, 'invites', inviteDoc.id), {
+                    status: 'accepted',
+                    acceptedAt: serverTimestamp()
+                }, { merge: true })
+
+                workspaceNames.push(invite.workspaceName || invite.workspaceId)
+            }
+
+            return { joinedCount: snapshot.size, workspaceNames }
+        } catch (error) {
+            console.error('Error processing pending invites on register:', error)
+            return { joinedCount: 0, workspaceNames: [] }
+        }
+    }
+
+    // ── Existing member management ──────────────────────────────
 
     /**
      * Update member role
@@ -234,6 +397,11 @@ export const useMemberStore = defineStore('member', () => {
         updateMemberRole,
         removeMember,
         getMember,
-        stopListening
+        stopListening,
+        hasPermission,
+        currentUserRole,
+        getPendingInvites,
+        cancelInvite,
+        acceptInviteOnRegister
     }
 })
