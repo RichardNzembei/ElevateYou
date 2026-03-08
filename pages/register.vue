@@ -94,10 +94,10 @@ const googleSignUp = async () => {
     const userDoc = await getDoc(doc(firestore, 'users', user.uid))
     if (!userDoc.exists()) {
       await setDoc(doc(firestore, 'users', user.uid), { email: user.email, displayName: user.displayName || '', photoURL: user.photoURL || '', createdAt: new Date() })
-      // Accept any pending invites
-      const { joinedCount, workspaceNames } = await memberStore.acceptInviteOnRegister(user.uid, user.email!)
-      if (joinedCount > 0) inviteMessage.value = `You've been added to ${joinedCount} workspace${joinedCount > 1 ? 's' : ''}: ${workspaceNames.join(', ')}!`
     }
+    // Always accept any pending invites
+    const { joinedCount, workspaceNames } = await memberStore.acceptInviteOnRegister(user.uid, user.email!)
+    if (joinedCount > 0) inviteMessage.value = `You've been added to ${joinedCount} workspace${joinedCount > 1 ? 's' : ''}: ${workspaceNames.join(', ')}!`
     router.push('/dashboard')
   } catch (err: any) {
     if (err.code !== 'auth/popup-closed-by-user') {

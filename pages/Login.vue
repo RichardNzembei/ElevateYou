@@ -56,21 +56,34 @@
 </template>
 
 <script setup lang="ts">
+import { useMemberStore } from '~/stores/useMemberStore'
+
 definePageMeta({ layout: 'auth' })
 
-const { auth } = useFirebase()
+const { auth, firestore } = useFirebase()
 const router = useRouter()
+const memberStore = useMemberStore()
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
 const googleLoading = ref(false)
 
+// Process any pending invites for this user after sign-in
+const processPendingInvites = async (userId: string, userEmail: string) => {
+  try {
+    await memberStore.acceptInviteOnRegister(userId, userEmail)
+  } catch (err) {
+    console.error('Error processing pending invites:', err)
+  }
+}
+
 const login = async () => {
   loading.value = true; error.value = ''
   try {
     const { signInWithEmailAndPassword } = await import('firebase/auth')
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const credential = await signInWithEmailAndPassword(auth, email.value, password.value)
+    await processPendingInvites(credential.user.uid, credential.user.email!)
     router.push('/dashboard')
   } catch { error.value = 'Invalid email or password' }
   finally { loading.value = false }
@@ -80,7 +93,20 @@ const googleSignIn = async () => {
   googleLoading.value = true; error.value = ''
   try {
     const { signInWithPopup, GoogleAuthProvider } = await import('firebase/auth')
-    await signInWithPopup(auth, new GoogleAuthProvider())
+    const { doc, getDoc, setDoc } = await import('firebase/firestore')
+    const result = await signInWithPopup(auth, new GoogleAuthProvider())
+    const user = result.user
+    // Create user doc if first-time Google user
+    const userDoc = await getDoc(doc(firestore, 'users', user.uid))
+    if (!userDoc.exists()) {
+      await setDoc(doc(firestore, 'users', user.uid), {
+        email: user.email,
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        createdAt: new Date()
+      })
+    }
+    await processPendingInvites(user.uid, user.email!)
     router.push('/dashboard')
   } catch (err: any) {
     if (err.code !== 'auth/popup-closed-by-user') {
