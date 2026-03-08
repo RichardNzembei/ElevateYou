@@ -25,6 +25,7 @@
     "firebase-admin": "^13.0.2",
     "lucide-vue-next": "^0.555.0",
     "multiparty": "^4.2.3",
+    "nodemailer": "^8.0.1",
     "nuxt": "^3.15.4",
     "pinia": "^2.3.1",
     "vue": "latest",

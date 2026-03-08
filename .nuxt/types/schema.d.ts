@@ -167,9 +167,9 @@ declare module 'nuxt/schema' {
       cdnURL: string,
    },
 
-   resendApiKey: string,
+   smtpUser: string,
 
-   emailFrom: string,
+   smtpPass: string,
 
    nitro: {
       envPrefix: string,

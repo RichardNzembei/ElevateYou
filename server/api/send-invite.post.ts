@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const { to, inviteUrl, workspaceName, projectName, role, inviterName } = body
@@ -7,11 +9,18 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig()
-  const apiKey = config.resendApiKey
 
-  if (!apiKey) {
+  if (!config.smtpUser || !config.smtpPass) {
     throw createError({ statusCode: 500, message: 'Email service not configured' })
   }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: config.smtpUser,
+      pass: config.smtpPass
+    }
+  })
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
@@ -55,19 +64,17 @@ export default defineEventHandler(async (event) => {
     </div>
   `
 
-  const response = await $fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: {
-      from: config.emailFrom || 'ElevateYou <onboarding@resend.dev>',
-      to: [to],
+  try {
+    await transporter.sendMail({
+      from: `ElevateYou <${config.smtpUser}>`,
+      to,
       subject: `You're invited to ${projectName || workspaceName || 'a project'} on ElevateYou`,
       html
-    }
-  })
+    })
 
-  return { success: true }
+    return { success: true }
+  } catch (err: any) {
+    console.error('Email send error:', err)
+    throw createError({ statusCode: 500, message: err.message || 'Failed to send email' })
+  }
 })
