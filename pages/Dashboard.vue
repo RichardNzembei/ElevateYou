@@ -543,6 +543,8 @@ const updateWorkspace = async (updates: any) => {
 
 // Lifecycle
 onMounted(async () => {
+  const { authReady } = useFirebase()
+  await authReady
   if (!user.value) return router.push('/login')
   workspaceStore.listen(user.value.uid)
 

@@ -1,8 +1,11 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
     // Only run on client side
     if (process.server) return
 
-    const { $auth } = useNuxtApp()
+    const { $auth, $authReady } = useNuxtApp()
+
+    // Wait for Firebase to restore auth session before making decisions
+    await $authReady
 
     // Protected routes that require authentication
     if (!$auth.currentUser && to.path === '/dashboard') {

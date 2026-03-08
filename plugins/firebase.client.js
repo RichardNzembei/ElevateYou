@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from '#app'
 import { initializeApp, getApps } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, browserLocalPersistence, setPersistence, onAuthStateChanged } from 'firebase/auth'
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 
@@ -22,6 +22,17 @@ export default defineNuxtPlugin((nuxtApp) => {
     const auth = getAuth(app)
     const firestore = getFirestore(app)
     const storage = getStorage(app)
+
+    // Ensure auth persists across page reloads (localStorage)
+    setPersistence(auth, browserLocalPersistence).catch(() => {})
+
+    // Create a promise that resolves once Firebase has restored the auth session
+    const authReady = new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, () => {
+            unsubscribe()
+            resolve(true)
+        })
+    })
 
     // Enable offline persistence for faster loads and offline support
     enableIndexedDbPersistence(firestore).catch((err) => {
@@ -48,6 +59,7 @@ export default defineNuxtPlugin((nuxtApp) => {
             auth,
             firestore,
             storage,
+            authReady,
         },
     }
 })
