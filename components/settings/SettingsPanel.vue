@@ -109,8 +109,48 @@
             <div v-if="isOwner" class="px-5 py-4">
               <div class="rounded-lg border border-red-200 bg-red-50/50 p-4">
                 <h3 class="text-[12px] font-semibold text-red-700 mb-1.5">Danger Zone</h3>
-                <p class="text-[11px] text-neutral-500 mb-3 leading-relaxed">Deleting this workspace is permanent. All projects, tasks, and documents will be lost.</p>
-                <button @click="confirmDelete" class="btn-danger">Delete Workspace</button>
+
+                <!-- Default state -->
+                <div v-if="!showDeleteConfirm">
+                  <p class="text-[11px] text-neutral-500 mb-3 leading-relaxed">Deleting this workspace is permanent. All projects, tasks, and documents will be lost.</p>
+                  <button @click="showDeleteConfirm = true" class="btn-danger">Delete Workspace</button>
+                </div>
+
+                <!-- Confirmation state -->
+                <Transition name="fade">
+                  <div v-if="showDeleteConfirm" class="space-y-3">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                      </div>
+                      <div>
+                        <p class="text-[12px] font-semibold text-red-700">Are you sure?</p>
+                        <p class="text-[11px] text-neutral-500">This cannot be undone.</p>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-medium text-neutral-500 mb-1">Type <span class="font-bold text-red-600">{{ workspace?.name || 'workspace' }}</span> to confirm</label>
+                      <input
+                        v-model="deleteConfirmText"
+                        type="text"
+                        class="input-field !border-red-200 focus:!border-red-400 text-[12px]"
+                        :placeholder="workspace?.name || 'workspace'"
+                        @keyup.enter="executeDelete"
+                      />
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        @click="executeDelete"
+                        :disabled="deleteConfirmText !== (workspace?.name || '') || deleting"
+                        class="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:hover:bg-red-600 text-white text-[12px] font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <svg v-if="deleting" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        {{ deleting ? 'Deleting...' : 'Delete permanently' }}
+                      </button>
+                      <button @click="showDeleteConfirm = false; deleteConfirmText = ''" class="flex-1 btn-secondary py-2 text-[12px]">Cancel</button>
+                    </div>
+                  </div>
+                </Transition>
               </div>
             </div>
           </div>
@@ -244,7 +284,20 @@ async function changePassword() {
   }
 }
 
-function confirmDelete() { if (window.confirm('Are you sure you want to delete this workspace? This action cannot be undone.')) { emit('delete-workspace'); close() } }
+const showDeleteConfirm = ref(false)
+const deleteConfirmText = ref('')
+const deleting = ref(false)
+
+function executeDelete() {
+  if (deleteConfirmText.value !== (props.workspace?.name || '')) return
+  deleting.value = true
+  emit('delete-workspace')
+  setTimeout(() => { deleting.value = false; showDeleteConfirm.value = false; deleteConfirmText.value = ''; close() }, 500)
+}
+
+watch(() => props.modelValue, (val) => {
+  if (!val) { showDeleteConfirm.value = false; deleteConfirmText.value = '' }
+})
 </script>
 
 <style scoped>
