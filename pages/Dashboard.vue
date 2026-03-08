@@ -9,6 +9,7 @@
       :current-workspace="workspaceStore.currentWorkspace"
       :projects="projectStore.projects"
       :selected-project-id="projectStore.selectedProject?.id || null"
+      :user-id="user?.uid || ''"
       :user-initials="userInitials"
       :user-email="user?.email || ''"
       :user-role="currentUserRole || 'member'"
@@ -567,17 +568,18 @@ const updateWorkspace = async (updates: any) => {
 }
 
 // Lifecycle
-// One-time fix: ensure workspace owner is in the members subcollection + project memberIds
-const migrateOwnerMembership = async (workspace: any) => {
-  if (!user.value || workspace.ownerId !== user.value.uid) return
+// One-time fix: ensure current user is in workspace members + project memberIds
+const migrateWorkspaceMembership = async (workspace: any) => {
+  if (!user.value) return
   const { doc, getDoc, setDoc, collection, getDocs, query, where, updateDoc, arrayUnion } = await import('firebase/firestore')
   const { firestore } = useFirebase()
   const uid = user.value.uid
+  const isOwner = workspace.ownerId === uid
 
-  // Fix workspace membership
+  // Fix workspace membership — ensure user is in members subcollection
   const memberRef = doc(firestore, 'workspaces', workspace.id, 'members', uid)
   const memberSnap = await getDoc(memberRef)
-  if (!memberSnap.exists()) {
+  if (!memberSnap.exists() && isOwner) {
     await setDoc(memberRef, {
       email: user.value.email || '',
       displayName: user.value.displayName || user.value.email?.split('@')[0] || '',
@@ -592,16 +594,27 @@ const migrateOwnerMembership = async (workspace: any) => {
     }, { merge: true })
   }
 
-  // Fix project membership — add owner to all projects that don't have memberIds
+  // Fix project membership
   const projectsSnap = await getDocs(
     query(collection(firestore, 'projects'), where('workspaceId', '==', workspace.id))
   )
   for (const pDoc of projectsSnap.docs) {
     const data = pDoc.data()
-    if (!data.memberIds || !data.memberIds.includes(uid)) {
-      await updateDoc(doc(firestore, 'projects', pDoc.id), {
-        memberIds: arrayUnion(uid)
-      })
+    if (isOwner) {
+      // Owner should be in all projects
+      if (!data.memberIds || !data.memberIds.includes(uid)) {
+        await updateDoc(doc(firestore, 'projects', pDoc.id), {
+          memberIds: arrayUnion(uid)
+        })
+      }
+    } else if (memberSnap.exists()) {
+      // Invited member with no project memberIds — add to all projects (legacy fix)
+      // This handles invites made before project-level membership was added
+      if (!data.memberIds || data.memberIds.length === 0) {
+        await updateDoc(doc(firestore, 'projects', pDoc.id), {
+          memberIds: arrayUnion(uid, workspace.ownerId)
+        })
+      }
     }
   }
 }
@@ -610,17 +623,26 @@ onMounted(async () => {
   const { authReady } = useFirebase()
   await authReady
   if (!user.value) return router.push('/login')
+
+  // Process any pending invites on every dashboard load (handles auto-login via persistence)
+  try {
+    await memberStore.acceptInviteOnRegister(user.value.uid, user.value.email!)
+  } catch (e) {
+    console.error('Error processing pending invites:', e)
+  }
+
   workspaceStore.listen(user.value.uid)
 
   watch(() => workspaceStore.loading, async (isLoading) => {
     if (!isLoading && workspaceStore.workspaces.length === 0) {
-      await workspaceStore.create('My Workspace', user.value!.uid)
+      const name = user.value!.displayName || user.value!.email?.split('@')[0] || 'My'
+      await workspaceStore.create(`${name}'s Workspace`, user.value!.uid)
     }
   }, { immediate: true })
 
   watch(() => workspaceStore.currentWorkspace, async (workspace) => {
     if (workspace) {
-      await migrateOwnerMembership(workspace)
+      await migrateWorkspaceMembership(workspace)
       projectStore.listen(workspace.id)
       taskStore.listen(workspace.id)
     }

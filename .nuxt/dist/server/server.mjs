@@ -625,7 +625,7 @@ const _routes = [
     name: "Dashboard",
     path: "/Dashboard",
     meta: __nuxt_page_meta$4,
-    component: () => import("./_nuxt/Dashboard-BiSUgi_k.js")
+    component: () => import("./_nuxt/Dashboard-BgO72P_R.js")
   },
   {
     name: "forgot-password",

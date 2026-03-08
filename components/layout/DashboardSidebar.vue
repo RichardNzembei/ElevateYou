@@ -33,14 +33,20 @@
 
       <!-- Workspace selector -->
       <div v-if="!collapsed" class="px-2.5 py-2.5 border-b border-white/[0.08]">
-        <select
-            v-if="workspaces.length > 0"
-            :value="currentWorkspace?.id"
-            @change="$emit('workspace-change', $event)"
-            class="w-full bg-white/[0.06] border border-white/[0.1] rounded-md px-2.5 py-1.5 text-[11px] text-neutral-300 outline-none focus:border-white/20 transition-colors appearance-none cursor-pointer"
-        >
-          <option v-for="ws in workspaces" :key="ws.id" :value="ws.id" class="bg-neutral-900 text-white">{{ ws.name }}</option>
-        </select>
+        <div class="relative">
+          <select
+              v-if="workspaces.length > 0"
+              :value="currentWorkspace?.id"
+              @change="$emit('workspace-change', $event)"
+              class="w-full bg-white/[0.06] border border-white/[0.1] rounded-md px-2.5 py-1.5 text-[11px] text-neutral-300 outline-none focus:border-white/20 transition-colors appearance-none cursor-pointer"
+          >
+            <option v-for="ws in workspaces" :key="ws.id" :value="ws.id" class="bg-neutral-900 text-white">{{ workspaceLabel(ws) }}</option>
+          </select>
+          <div v-if="workspaces.length > 1" class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+            <span class="text-[9px] bg-white/10 text-neutral-400 px-1 py-0.5 rounded">{{ workspaces.length }}</span>
+            <svg class="w-3 h-3 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </div>
+        </div>
       </div>
 
       <!-- Navigation -->
@@ -152,7 +158,7 @@ import { useTaskStore } from '@/stores/useTaskStore'
 
 const taskStore = useTaskStore()
 
-defineProps<{
+const props = defineProps<{
   collapsed: boolean
   mobileOpen: boolean
   activeView: string
@@ -160,10 +166,16 @@ defineProps<{
   currentWorkspace: any
   projects: any[]
   selectedProjectId: string | null
+  userId: string
   userInitials: string
   userEmail: string
   userRole: string
 }>()
+
+const workspaceLabel = (ws: any) => {
+  if (ws.ownerId === props.userId) return ws.name
+  return `${ws.name} (shared)`
+}
 
 defineEmits([
   'toggle-collapse', 'close-mobile', 'navigate', 'workspace-change',
