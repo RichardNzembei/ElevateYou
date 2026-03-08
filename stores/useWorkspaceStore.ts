@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc, deleteDoc, writeBatch } from 'firebase/firestore'
 import { ref } from 'vue'
 import type { Workspace } from '@/types'
 
@@ -123,6 +123,49 @@ export const useWorkspaceStore = defineStore('workspace', () => {
         })
     }
 
+    async function remove(workspaceId: string) {
+        const batch = writeBatch(firestore)
+
+        // Delete all projects in this workspace
+        const projectsSnap = await getDocs(query(collection(firestore, 'projects'), where('workspaceId', '==', workspaceId)))
+        for (const pDoc of projectsSnap.docs) {
+            // Delete tasks for each project
+            const tasksSnap = await getDocs(query(collection(firestore, 'tasks'), where('projectId', '==', pDoc.id)))
+            tasksSnap.docs.forEach(t => batch.delete(t.ref))
+            batch.delete(pDoc.ref)
+        }
+
+        // Delete docs in this workspace
+        const docsSnap = await getDocs(query(collection(firestore, 'docs'), where('workspaceId', '==', workspaceId)))
+        docsSnap.docs.forEach(d => batch.delete(d.ref))
+
+        // Delete activity in this workspace
+        const activitySnap = await getDocs(query(collection(firestore, 'activity'), where('workspaceId', '==', workspaceId)))
+        activitySnap.docs.forEach(a => batch.delete(a.ref))
+
+        // Delete pending invites for this workspace
+        const invitesSnap = await getDocs(query(collection(firestore, 'invites'), where('workspaceId', '==', workspaceId)))
+        invitesSnap.docs.forEach(i => batch.delete(i.ref))
+
+        // Delete members subcollection
+        const membersSnap = await getDocs(collection(firestore, 'workspaces', workspaceId, 'members'))
+        for (const mDoc of membersSnap.docs) {
+            batch.delete(mDoc.ref)
+            // Remove workspace from each member's workspaces subcollection
+            batch.delete(doc(firestore, 'users', mDoc.id, 'workspaces', workspaceId))
+        }
+
+        // Delete workspace doc itself
+        batch.delete(doc(firestore, 'workspaces', workspaceId))
+
+        await batch.commit()
+
+        // Switch to another workspace
+        if (currentWorkspace.value?.id === workspaceId) {
+            currentWorkspace.value = workspaces.value.find(w => w.id !== workspaceId) || null
+        }
+    }
+
     return {
         workspaces,
         currentWorkspace,
@@ -130,6 +173,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
         listen,
         stopListening,
         create,
-        update
+        update,
+        remove
     }
 })

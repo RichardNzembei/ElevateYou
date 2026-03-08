@@ -11,8 +11,14 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const authPages = ['/login', '/register', '/forgot-password']
     const protectedPages = ['/dashboard']
 
-    // Redirect logged-in users away from auth pages to dashboard
-    if (isLoggedIn && authPages.includes(to.path)) {
+    // Allow invite pages for everyone
+    if (to.path.startsWith('/invite/')) return
+
+    // Don't redirect away from auth pages if there's a redirect param (invite flow)
+    const hasRedirect = !!to.query.redirect
+
+    // Redirect logged-in users away from auth pages to dashboard (unless redirecting from invite)
+    if (isLoggedIn && authPages.includes(to.path) && !hasRedirect) {
         return navigateTo('/dashboard')
     }
 

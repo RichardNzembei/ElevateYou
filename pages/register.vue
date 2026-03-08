@@ -72,8 +72,10 @@ import { useMemberStore } from '~/stores/useMemberStore'
 definePageMeta({ layout: 'auth' })
 
 const { auth, firestore } = useFirebase()
+const route = useRoute()
 const router = useRouter()
 const memberStore = useMemberStore()
+const redirectPath = computed(() => (route.query.redirect as string) || '/login')
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -98,7 +100,7 @@ const googleSignUp = async () => {
     // Always accept any pending invites
     const { joinedCount, workspaceNames } = await memberStore.acceptInviteOnRegister(user.uid, user.email!)
     if (joinedCount > 0) inviteMessage.value = `You've been added to ${joinedCount} workspace${joinedCount > 1 ? 's' : ''}: ${workspaceNames.join(', ')}!`
-    router.push('/dashboard')
+    router.push(redirectPath.value.startsWith('/invite') ? redirectPath.value : '/dashboard')
   } catch (err: any) {
     if (err.code !== 'auth/popup-closed-by-user') {
       error.value = 'Google sign-up failed. Please try again.'
@@ -118,7 +120,7 @@ const register = async () => {
     const { joinedCount, workspaceNames } = await memberStore.acceptInviteOnRegister(credential.user.uid, email.value.trim())
     success.value = true
     if (joinedCount > 0) inviteMessage.value = `You've been added to ${joinedCount} workspace${joinedCount > 1 ? 's' : ''}: ${workspaceNames.join(', ')}!`
-    setTimeout(() => router.push('/login'), 2500)
+    setTimeout(() => router.push(redirectPath.value), 2500)
   } catch (err: any) {
     error.value = err.code === 'auth/email-already-in-use' ? 'Email already in use' : 'Registration failed'
   } finally { loading.value = false }

@@ -214,6 +214,7 @@
       :workspace="workspaceStore.currentWorkspace"
       :user-role="currentUserRole || 'member'"
       @update-workspace="updateWorkspace"
+      @delete-workspace="deleteWorkspace"
     />
 
     <!-- Modals -->
@@ -258,8 +259,9 @@
     </Modal>
 
     <MemberInviteModal
+      ref="inviteModalRef"
       v-model="showInviteModal"
-      :pending-invites="pendingInvites"
+      :pending-invites="projectPendingInvites"
       :project-name="projectStore.selectedProject?.name || ''"
       @invite="sendInvites"
       @cancel-invite="cancelInvite"
@@ -327,6 +329,7 @@ const newDocTitle = ref('')
 const currentDoc = ref<Doc | null>(null)
 const searchInput = ref<HTMLInputElement | null>(null)
 const pendingInvites = ref<any[]>([])
+const inviteModalRef = ref<any>(null)
 
 const presetColors = ['#171717', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4']
 const editProjectForm = ref({ name: '', description: '', color: '#171717' })
@@ -508,7 +511,7 @@ const sendInvites = async (invites: { email: string; role: string }[]) => {
   if (!workspaceStore.currentWorkspace) return showError('No workspace selected')
   if (!projectStore.selectedProject) return showError('No project selected')
   let successCount = 0
-  let pendingCount = 0
+  const pendingResults: { email: string; inviteId: string }[] = []
   for (const inv of invites) {
     try {
       const result = await memberStore.inviteMember(
@@ -518,16 +521,40 @@ const sendInvites = async (invites: { email: string; role: string }[]) => {
         workspaceStore.currentWorkspace.name || 'Workspace',
         projectStore.selectedProject.id
       )
-      if (result.pending) pendingCount++
-      else successCount++
+      if (result.pending && result.inviteId) {
+        pendingResults.push({ email: inv.email, inviteId: result.inviteId })
+        // Send invite email
+        const inviteUrl = `${window.location.origin}/invite/${result.inviteId}`
+        try {
+          await $fetch('/api/send-invite', {
+            method: 'POST',
+            body: {
+              to: inv.email,
+              inviteUrl,
+              workspaceName: workspaceStore.currentWorkspace.name,
+              projectName: projectStore.selectedProject.name,
+              role: inv.role,
+              inviterName: user.value?.displayName || user.value?.email || 'A teammate'
+            }
+          })
+        } catch (emailErr) {
+          console.warn('Email send failed, invite link still created:', emailErr)
+        }
+      } else {
+        successCount++
+      }
       logActivity('member_invited', inv.email)
     } catch (err: any) {
       showError(err.message || `Failed to invite ${inv.email}`)
     }
   }
   if (successCount > 0) showSuccess(`${successCount} member${successCount > 1 ? 's' : ''} added to project!`)
-  else if (pendingCount > 0) showSuccess(`${pendingCount} invite${pendingCount > 1 ? 's' : ''} sent! They'll join when they register.`)
-  showInviteModal.value = false
+  if (pendingResults.length > 0) {
+    showSuccess(`Invite${pendingResults.length > 1 ? 's' : ''} sent!`)
+    inviteModalRef.value?.setInviteResults(pendingResults)
+  } else {
+    showInviteModal.value = false
+  }
   loadPendingInvites()
 }
 
@@ -565,6 +592,20 @@ const updateWorkspace = async (updates: any) => {
     await workspaceStore.update(workspaceStore.currentWorkspace.id, updates)
     showSuccess('Workspace updated')
   } catch { showError('Failed to update workspace') }
+}
+
+const deleteWorkspace = async () => {
+  if (!workspaceStore.currentWorkspace) return
+  try {
+    await workspaceStore.remove(workspaceStore.currentWorkspace.id)
+    showSuccess('Workspace deleted')
+    showSettings.value = false
+    // If no workspaces left, create a new default one
+    if (workspaceStore.workspaces.length === 0 && user.value) {
+      const name = user.value.displayName || user.value.email?.split('@')[0] || 'My'
+      await workspaceStore.create(`${name}'s Workspace`, user.value.uid)
+    }
+  } catch { showError('Failed to delete workspace') }
 }
 
 // Lifecycle

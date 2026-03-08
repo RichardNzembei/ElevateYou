@@ -61,8 +61,10 @@ import { useMemberStore } from '~/stores/useMemberStore'
 definePageMeta({ layout: 'auth' })
 
 const { auth, firestore } = useFirebase()
+const route = useRoute()
 const router = useRouter()
 const memberStore = useMemberStore()
+const redirectPath = computed(() => (route.query.redirect as string) || '/dashboard')
 const email = ref('')
 const password = ref('')
 const error = ref('')
@@ -84,7 +86,7 @@ const login = async () => {
     const { signInWithEmailAndPassword } = await import('firebase/auth')
     const credential = await signInWithEmailAndPassword(auth, email.value, password.value)
     await processPendingInvites(credential.user.uid, credential.user.email!)
-    router.push('/dashboard')
+    router.push(redirectPath.value)
   } catch { error.value = 'Invalid email or password' }
   finally { loading.value = false }
 }
@@ -107,7 +109,7 @@ const googleSignIn = async () => {
       })
     }
     await processPendingInvites(user.uid, user.email!)
-    router.push('/dashboard')
+    router.push(redirectPath.value)
   } catch (err: any) {
     if (err.code !== 'auth/popup-closed-by-user') {
       error.value = 'Google sign-in failed. Please try again.'

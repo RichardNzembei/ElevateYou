@@ -141,7 +141,7 @@ export const useMemberStore = defineStore('member', () => {
         role: Role = 'member',
         workspaceName: string = '',
         projectId?: string
-    ): Promise<{ success: boolean; pending: boolean }> {
+    ): Promise<{ success: boolean; pending: boolean; inviteId?: string }> {
         try {
             const normalizedEmail = email.toLowerCase().trim()
 
@@ -207,14 +207,14 @@ export const useMemberStore = defineStore('member', () => {
                                 projectIds: arrayUnion(projectId)
                             })
                         }
-                        return { success: true, pending: true }
+                        return { success: true, pending: true, inviteId: existingDoc.id }
                     }
                     throw new Error('A pending invite already exists for this email')
                 }
 
                 const invitedByUid = auth.currentUser?.uid || 'unknown'
 
-                await addDoc(collection(firestore, 'invites'), {
+                const inviteRef = await addDoc(collection(firestore, 'invites'), {
                     email: normalizedEmail,
                     workspaceId,
                     workspaceName,
@@ -225,7 +225,7 @@ export const useMemberStore = defineStore('member', () => {
                     status: 'pending'
                 })
 
-                return { success: true, pending: true }
+                return { success: true, pending: true, inviteId: inviteRef.id }
             }
         } catch (error: any) {
             console.error('Error inviting member:', error)

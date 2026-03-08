@@ -613,9 +613,10 @@ const generateRouteKey$1 = (routeProps, override) => {
 function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
-const __nuxt_page_meta$4 = { layout: "dashboard", ssr: false };
-const __nuxt_page_meta$3 = { layout: "auth" };
-const __nuxt_page_meta$2 = { layout: "default" };
+const __nuxt_page_meta$5 = { layout: "dashboard", ssr: false };
+const __nuxt_page_meta$4 = { layout: "auth" };
+const __nuxt_page_meta$3 = { layout: "default" };
+const __nuxt_page_meta$2 = { layout: "auth", ssr: false };
 const __nuxt_page_meta$1 = { layout: "auth" };
 const __nuxt_page_meta = { layout: "auth" };
 function handleHotUpdate(_router, _generateRoutes) {
@@ -624,32 +625,38 @@ const _routes = [
   {
     name: "Dashboard",
     path: "/Dashboard",
-    meta: __nuxt_page_meta$4,
-    component: () => import("./_nuxt/Dashboard-BgO72P_R.js")
+    meta: __nuxt_page_meta$5,
+    component: () => import("./_nuxt/Dashboard-D3At3TMk.js")
   },
   {
     name: "forgot-password",
     path: "/forgot-password",
-    meta: __nuxt_page_meta$3,
-    component: () => import("./_nuxt/forgot-password-BHkZi7gK.js")
+    meta: __nuxt_page_meta$4,
+    component: () => import("./_nuxt/forgot-password-By_Hu77O.js")
   },
   {
     name: "index",
     path: "/",
+    meta: __nuxt_page_meta$3,
+    component: () => import("./_nuxt/index-z2YZQkjT.js")
+  },
+  {
+    name: "invite-id",
+    path: "/invite/:id()",
     meta: __nuxt_page_meta$2,
-    component: () => import("./_nuxt/index-q8g3nShP.js")
+    component: () => import("./_nuxt/_id_-BhVKU-46.js")
   },
   {
     name: "Login",
     path: "/Login",
     meta: __nuxt_page_meta$1,
-    component: () => import("./_nuxt/Login-MHtVYKIA.js")
+    component: () => import("./_nuxt/Login-DNeQS2VN.js")
   },
   {
     name: "register",
     path: "/register",
     meta: __nuxt_page_meta,
-    component: () => import("./_nuxt/register-eLC4rSH-.js")
+    component: () => import("./_nuxt/register-BPo-VIh-.js")
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -1255,7 +1262,7 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin({
     };
   }
 });
-const LazyIcon = defineAsyncComponent(() => import("./_nuxt/index-BglEg6v1.js").then((r) => r["default"] || r.default || r));
+const LazyIcon = defineAsyncComponent(() => import("./_nuxt/index-DTNnvSiE.js").then((r) => r["default"] || r.default || r));
 const lazyGlobalComponents = [
   ["Icon", LazyIcon]
 ];
@@ -1584,7 +1591,7 @@ const plugins = [
 const layouts = {
   auth: defineAsyncComponent(() => import("./_nuxt/auth-CCc5QjIc.js").then((m) => m.default || m)),
   dashboard: defineAsyncComponent(() => import("./_nuxt/dashboard-58FRd2hE.js").then((m) => m.default || m)),
-  default: defineAsyncComponent(() => import("./_nuxt/default-BWUYXxeM.js").then((m) => m.default || m))
+  default: defineAsyncComponent(() => import("./_nuxt/default-wxrpYL2b.js").then((m) => m.default || m))
 };
 const LayoutLoader = defineComponent({
   name: "LayoutLoader",
@@ -1860,7 +1867,7 @@ const _sfc_main$1 = {
     const statusMessage = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import("./_nuxt/error-404-NEwwOqwd.js"));
+    const _Error404 = defineAsyncComponent(() => import("./_nuxt/error-404-Cn0nozrK.js"));
     const _Error = defineAsyncComponent(() => import("./_nuxt/error-500-DMoDQAr4.js"));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
@@ -1943,13 +1950,14 @@ let entry;
 const entry$1 = (ssrContext) => entry(ssrContext);
 export {
   useRouter as a,
-  useNuxtApp as b,
-  asyncDataDefaults as c,
-  createError as d,
+  useRoute as b,
+  useNuxtApp as c,
+  asyncDataDefaults as d,
   entry$1 as default,
-  useAppConfig as e,
-  useRuntimeConfig as f,
-  navigateTo as g,
+  createError as e,
+  useAppConfig as f,
+  useRuntimeConfig as g,
+  navigateTo as h,
   nuxtLinkDefaults as n,
   resolveRouteObject as r,
   useHead as u
