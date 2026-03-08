@@ -10,15 +10,19 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig()
 
-  if (!config.smtpUser || !config.smtpPass) {
+  const smtpUser = (config.smtpUser || '').trim()
+  const smtpPass = (config.smtpPass || '').trim().replace(/\s+/g, '')
+
+  if (!smtpUser || !smtpPass) {
+    console.error('SMTP not configured. SMTP_USER:', !!smtpUser, 'SMTP_PASS:', !!smtpPass)
     throw createError({ statusCode: 500, message: 'Email service not configured' })
   }
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: config.smtpUser,
-      pass: config.smtpPass
+      user: smtpUser,
+      pass: smtpPass
     }
   })
 
@@ -74,7 +78,7 @@ export default defineEventHandler(async (event) => {
 
     return { success: true }
   } catch (err: any) {
-    console.error('Email send error:', err)
-    throw createError({ statusCode: 500, message: err.message || 'Failed to send email' })
+    console.error('Email send error:', err.code, err.message, err.response)
+    throw createError({ statusCode: 500, message: `Email failed: ${err.code || ''} ${err.message || 'Unknown error'}` })
   }
 })
