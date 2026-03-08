@@ -521,25 +521,28 @@ const sendInvites = async (invites: { email: string; role: string }[]) => {
         workspaceStore.currentWorkspace.name || 'Workspace',
         projectStore.selectedProject.id
       )
+      // Send email notification
+      const inviteUrl = result.inviteId
+        ? `${window.location.origin}/invite/${result.inviteId}`
+        : `${window.location.origin}/dashboard`
+      try {
+        await $fetch('/api/send-invite', {
+          method: 'POST',
+          body: {
+            to: inv.email,
+            inviteUrl,
+            workspaceName: workspaceStore.currentWorkspace.name,
+            projectName: projectStore.selectedProject.name,
+            role: inv.role,
+            inviterName: user.value?.displayName || user.value?.email || 'A teammate'
+          }
+        })
+      } catch (emailErr) {
+        console.warn('Email send failed:', emailErr)
+      }
+
       if (result.pending && result.inviteId) {
         pendingResults.push({ email: inv.email, inviteId: result.inviteId })
-        // Send invite email
-        const inviteUrl = `${window.location.origin}/invite/${result.inviteId}`
-        try {
-          await $fetch('/api/send-invite', {
-            method: 'POST',
-            body: {
-              to: inv.email,
-              inviteUrl,
-              workspaceName: workspaceStore.currentWorkspace.name,
-              projectName: projectStore.selectedProject.name,
-              role: inv.role,
-              inviterName: user.value?.displayName || user.value?.email || 'A teammate'
-            }
-          })
-        } catch (emailErr) {
-          console.warn('Email send failed, invite link still created:', emailErr)
-        }
       } else {
         successCount++
       }
